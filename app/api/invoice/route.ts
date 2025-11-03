@@ -1,0 +1,210 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import { jwtVerify } from 'jose';
+import dbConnect from '@/lib/db';
+import Invoice from '@/models/Invoice';
+
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.JWT_SECRET || 'your-secret-key-change-in-production'
+);
+
+async function verifyAuth(request: NextRequest) {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('auth-token')?.value;
+
+    if (!token) {
+      return null;
+    }
+
+    const { payload } = await jwtVerify(token, JWT_SECRET);
+    console.log('Verified payload:', payload.role);
+    
+    return payload;
+  } catch (error) {
+    return null;
+  }
+}
+
+// GET - Fetch all invoices
+export async function GET(request: NextRequest) {
+  try {
+    const user = await verifyAuth(request);
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    if (user.role !== 'ADMIN') {
+      return NextResponse.json(
+        { error: 'Access denied. Admin only.' },
+        { status: 403 }
+      );
+    }
+
+    await dbConnect();
+
+    // Get query parameters for filtering
+    const { searchParams } = new URL(request.url);
+    const status = searchParams.get('status');
+    const clientName = searchParams.get('clientName');
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
+
+    // Build query
+    let query: any = { createdBy: user.userId };
+
+    if (status && status !== 'ALL') {
+      query.status = status;
+    }
+
+    if (clientName) {
+      query.clientName = { $regex: clientName, $options: 'i' };
+    }
+
+    if (startDate || endDate) {
+      query.invoiceDate = {};
+      if (startDate) {
+        query.invoiceDate.$gte = new Date(startDate);
+      }
+      if (endDate) {
+        query.invoiceDate.$lte = new Date(endDate);
+      }
+    }
+
+    const invoices = await Invoice.find(query)
+      .sort({ invoiceDate: -1, createdAt: -1 })
+      .select('invoiceNumber invoiceDate clientName total status')
+      .lean();
+
+    return NextResponse.json({
+      success: true,
+      invoices,
+      count: invoices.length,
+    });
+  } catch (error: any) {
+    console.error('Get invoices error:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch invoices' },
+      { status: 500 }
+    );
+  }
+}
+
+// POST - Create new invoice
+export async function POST(request: NextRequest) {
+  try {
+    const user = await verifyAuth(request);
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    if (user.role !== 'ADMIN') {
+      return NextResponse.json(
+        { error: 'Access denied. Admin only.' },
+        { status: 403 }
+      );
+    }
+
+    await dbConnect();
+
+    const body = await request.json();
+
+ console.log('📝 Creating invoice:', body.invoiceNumber);
+
+
+    // Validate required fields
+    const requiredFields = [
+      'invoiceNumber',
+      'clientName',
+      'clientAddress',
+      'clientCity',
+      'clientState',
+      'clientPincode',
+      'clientPhone',
+      'items',
+      'subtotal',
+      'total',
+    ];
+
+    for (const field of requiredFields) {
+      if (!body[field]) {
+        return NextResponse.json(
+          { error: `${field} is required` },
+          { status: 400 }
+        );
+      }
+    }
+
+    // Validate items
+    if (!Array.isArray(body.items) || body.items.length === 0) {
+      return NextResponse.json(
+        { error: 'At least one item is required' },
+        { status: 400 }
+      );
+    }
+
+    // Validate each item
+    // for (const item of body.items) {
+    //   if (!item.item || !item.description || !item.quantity || !item.rate) {
+    //     return NextResponse.json(
+    //       { error: 'All item fields are required' },
+    //       { status: 400 }
+    //     );
+    //   }
+    // }
+    for (const item of body.items) {
+      if (!item.item || !item.description || item.quantity === undefined || item.rate === undefined) {
+        return NextResponse.json(
+          { error: 'All item fields (item, description, quantity, rate) are required' },
+          { status: 400 }
+        );
+      }
+    }
+
+    // Create invoice
+    const invoice = new Invoice({
+      ...body,
+      createdBy: user.userId,
+      invoiceDate: body.invoiceDate || new Date(),
+    });
+
+    await invoice.save();
+
+    console.log('Invoice saved successfully:', invoice.invoiceNumber);
+
+
+    return NextResponse.json({
+      success: true,
+      message: 'Invoice created successfully',
+      invoice: {
+        _id: invoice._id,
+        invoiceNumber: invoice.invoiceNumber,
+        total: invoice.total,
+        status: invoice.status,
+      },
+    });
+  } catch (error: any) {
+    console.error('Create invoice error:', error);
+    
+    if (error.code === 11000) {
+      return NextResponse.json(
+        { error: 'Invoice number already exists' },
+        { status: 400 }
+      );
+    }
+
+    return NextResponse.json(
+      { error: 'Failed to create invoice' },
+      { status: 500 }
+    );
+  }
+}
+
