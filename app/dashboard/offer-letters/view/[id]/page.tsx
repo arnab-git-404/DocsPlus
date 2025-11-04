@@ -25,6 +25,7 @@ import {
   AlertCircle,
   XCircle,
   FileEdit,
+  Eye,
 } from 'lucide-react';
 
 interface OfferLetter {
@@ -228,8 +229,17 @@ export default function ViewOfferLetterPage() {
 
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-3">
+            <Button
+              onClick={() => {
+                localStorage.setItem('offerLetterPreview', JSON.stringify(offerLetter));
+                window.open(`/dashboard/offer-letters/preview`, '_blank');
+              }}
+            >
+              <Eye className="h-4 w-4 mr-2" />
+              Preview
+            </Button>
           <Button
-            onClick={() => router.push(`/dashboard/offer-letter/${id}/edit`)}
+            onClick={() => router.push(`/dashboard/offer-letters/edit/${id}`)}
             variant="outline"
             disabled={actionLoading}
           >
@@ -249,7 +259,7 @@ export default function ViewOfferLetterPage() {
             Send Email
           </Button>
           <Button
-            onClick={() => window.open(`/api/offer-letter/${id}/pdf`, '_blank')}
+            onClick={() => window.open(`/api/offer-letters/${id}/pdf`, '_blank')}
             variant="outline"
             disabled={actionLoading}
           >
