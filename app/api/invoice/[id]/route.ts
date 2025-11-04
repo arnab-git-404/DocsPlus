@@ -201,7 +201,7 @@ export async function DELETE(
 
     await dbConnect();
 
-    const invoice = await Invoice.findById(params.id);
+    const invoice = await Invoice.findById(id);
 
     if (!invoice) {
       return NextResponse.json(
@@ -218,7 +218,7 @@ export async function DELETE(
       );
     }
 
-    await Invoice.findByIdAndDelete(params.id);
+    await Invoice.findByIdAndDelete(id);
 
     return NextResponse.json({
       success: true,
