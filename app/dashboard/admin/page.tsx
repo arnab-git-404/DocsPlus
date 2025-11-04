@@ -150,28 +150,28 @@ export default async function AdminDashboardPage() {
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Link
-              href="/dashboard/admin/user/new"
+              href="/dashboard/admin/users/new"
               className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-lg hover:border-primary transition-colors cursor-pointer group"
             >
               <Users className="h-8 w-8 mb-2 text-muted-foreground group-hover:text-primary" />
               <span className="text-sm font-medium">Add New User</span>
             </Link>
             <Link
-              href="/dashboard/salary-slip"
+              href="/dashboard/admin/salary-slips"
               className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-lg hover:border-primary transition-colors cursor-pointer group"
             >
               <FileText className="h-8 w-8 mb-2 text-muted-foreground group-hover:text-primary" />
               <span className="text-sm font-medium">Generate Salary Slip</span>
             </Link>
             <Link
-              href="/dashboard/invoice/new"
+              href="/dashboard/admin/invoices/new"
               className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-lg hover:border-primary transition-colors cursor-pointer group"
             >
               <Receipt className="h-8 w-8 mb-2 text-muted-foreground group-hover:text-primary" />
               <span className="text-sm font-medium">Create Invoice</span>
             </Link>
             <Link
-              href="/dashboard/offer-letters/new"
+              href="/dashboard/admin/offer-letters/new"
               className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-lg hover:border-primary transition-colors cursor-pointer group"
             >
               <Mail className="h-8 w-8 mb-2 text-muted-foreground group-hover:text-primary" />
