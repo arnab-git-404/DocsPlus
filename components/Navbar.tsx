@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Moon, Sun, User, Settings, LogOut, FileText, Receipt, Mail } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface NavbarProps {
   user?: {
@@ -24,7 +25,10 @@ interface NavbarProps {
   };
 }
 
-const Navbar = ({ user }: NavbarProps) => {
+const Navbar = ( ) => {
+
+  const { user } = useAuth();
+
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const [loading, setLoading] = useState(false);

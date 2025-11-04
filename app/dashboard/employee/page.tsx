@@ -1,7 +1,7 @@
 'use client';
 
 import { verify } from 'jsonwebtoken';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import dbConnect from '@/lib/db';
 import User from '@/models/User';
 import { useEffect } from 'react';
@@ -12,30 +12,26 @@ import { Button } from '@/components/ui/button';
 
 
 export default async function EmployeeDashboardPage() {
-//   const user = await getEmployeeUser();
 
-  // const { user } = useAuth(); // Dummy user data for now
+  const { user } = useAuth(); 
+const router = useRouter();
 
-  //   useEffect(() => {
-  //   if (user?.role === 'ADMIN') {
-  //     redirect('/dashboard/admin');
-  //   }
-  // }, [user]);
-
-    const user = {
-    name: 'John Doe',
-    email: 'example@gmail.com',
-    role: 'EMPLOYEE',
-    status: 'ACTIVE',
-    }
-  
   if (!user) {
-    redirect('/login');
+    router.push('/login');
   }
 
-  if (user.role === 'ADMIN') {
-    redirect('/dashboard/admin');
-  }
+  useEffect(() => {
+    if (user?.role === 'ADMIN') {
+      router.push('/dashboard/admin');
+    }
+  }, [user]);
+
+  // const user = {
+  // name: 'John Doe',
+  // email: 'example@gmail.com',
+  // role: 'EMPLOYEE',
+  // status: 'ACTIVE',
+  // };
 
   const stats = [
     {
