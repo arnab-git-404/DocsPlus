@@ -9,6 +9,8 @@ export interface IEmployee extends Document {
   status: 'PENDING' | 'ACTIVE' | 'INACTIVE';
   activationToken?: string;
   activationExpiry?: Date;
+  passwordResetToken?: string;
+  passwordResetExpiry?: Date;
   createdBy?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -56,6 +58,8 @@ const EmployeeSchema = new Schema<IEmployee>(
       type: Date,
       select: false,
     },
+    passwordResetToken: { type: String },
+    passwordResetExpiry: { type: Date },
     // createdBy: {
     //   type:  Schema.Types.ObjectId,
     //   ref: 'Employee',
@@ -67,6 +71,11 @@ const EmployeeSchema = new Schema<IEmployee>(
     toObject: { virtuals: true },
   }
 );
+
+// EmployeeSchema.index({ email: 1 });
+// EmployeeSchema.index({ employeeId: 1 });
+EmployeeSchema.index({ activationToken: 1 });
+EmployeeSchema.index({ passwordResetToken: 1 });
 
 export default mongoose.models.Employee || mongoose.model<IEmployee>('Employee', EmployeeSchema);
 
