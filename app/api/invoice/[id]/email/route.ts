@@ -1,20 +1,21 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { jwtVerify } from 'jose';
-import dbConnect from '@/lib/db';
-import Invoice from '@/models/Invoice';
-import mongoose from 'mongoose';
-import nodemailer from 'nodemailer';
-import puppeteer from 'puppeteer';
+import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { jwtVerify } from "jose";
+import dbConnect from "@/lib/db";
+import Invoice from "@/models/Invoice";
+import mongoose from "mongoose";
+import nodemailer from "nodemailer";
+import puppeteer from "puppeteer";
+import { sendInvoiceEmail, verifyEmailConfig } from "@/lib/mail";
 
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'your-secret-key-change-in-production'
+  process.env.JWT_SECRET || "your-secret-key-change-in-production"
 );
 
 async function verifyAuth(request: NextRequest) {
   try {
     const cookieStore = await cookies();
-    const token = cookieStore.get('auth-token')?.value;
+    const token = cookieStore.get("auth-token")?.value;
 
     if (!token) {
       return null;
@@ -27,15 +28,14 @@ async function verifyAuth(request: NextRequest) {
   }
 }
 
-
 async function generateInvoicePDF(invoice: any): Promise<Buffer> {
   const browser = await puppeteer.launch({
     headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
-  
+
   const page = await browser.newPage();
-  
+
   const html = `
     <!DOCTYPE html>
     <html>
@@ -51,7 +51,9 @@ async function generateInvoicePDF(invoice: any): Promise<Buffer> {
     </head>
     <body>
       <h1>Invoice ${invoice.invoiceNumber}</h1>
-      <p><strong>Date:</strong> ${new Date(invoice.invoiceDate).toLocaleDateString()}</p>
+      <p><strong>Date:</strong> ${new Date(
+        invoice.invoiceDate
+      ).toLocaleDateString()}</p>
       <p><strong>Client:</strong> ${invoice.clientName}</p>
       <p><strong>Total:</strong> ₹${invoice.total.toFixed(2)}</p>
       <table>
@@ -64,14 +66,18 @@ async function generateInvoicePDF(invoice: any): Promise<Buffer> {
           </tr>
         </thead>
         <tbody>
-          ${invoice.items.map((item: any) => `
+          ${invoice.items
+            .map(
+              (item: any) => `
             <tr>
               <td>${item.item}<br/><small>${item.description}</small></td>
               <td>${item.quantity}</td>
               <td>₹${item.rate.toFixed(2)}</td>
               <td>₹${item.amount.toFixed(2)}</td>
             </tr>
-          `).join('')}
+          `
+            )
+            .join("")}
           <tr class="total">
             <td colspan="3">Total</td>
             <td>₹${invoice.total.toFixed(2)}</td>
@@ -81,12 +87,12 @@ async function generateInvoicePDF(invoice: any): Promise<Buffer> {
     </body>
     </html>
   `;
-  
+
   await page.setContent(html);
-  const pdfBuffer = await page.pdf({ format: 'A4' });
-  
+  const pdfBuffer = await page.pdf({ format: "A4" });
+
   await browser.close();
-  
+
   return Buffer.from(pdfBuffer);
 }
 
@@ -98,108 +104,72 @@ export async function POST(
     const user = await verifyAuth(request);
 
     if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (user.role !== 'ADMIN') {
+    if (user.role !== "ADMIN") {
       return NextResponse.json(
-        { error: 'Access denied. Admin only.' },
+        { error: "Access denied. Admin only." },
         { status: 403 }
       );
     }
 
-     const { id } = await params; 
+    const { id } = await params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json(
-        { error: 'Invalid invoice ID' },
+        { error: "Invalid invoice ID" },
         { status: 400 }
       );
     }
 
     await dbConnect();
 
-    const invoice = await Invoice.findById(id).lean() as any;
+    const invoice = (await Invoice.findById(id).lean()) as any;
 
     if (!invoice) {
-      return NextResponse.json(
-        { error: 'Invoice not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Invoice not found" }, { status: 404 });
     }
 
     // Check if user owns this invoice
     if (invoice.createdBy.toString() !== user.userId) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
     // Check if client email exists
     if (!invoice.clientEmail) {
       return NextResponse.json(
-        { error: 'Client email not found' },
+        { error: "Client email not found" },
         { status: 400 }
       );
     }
 
-    // For now, we'll return a success message
-    // In production, you would integrate with an email service like:
-    // - Nodemailer
-    // - SendGrid
-    // - AWS SES
-    // - Resend
-
-    // Example email sending code:
-    //
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    });
-    
     const pdfBuffer = await generateInvoicePDF(invoice);
 
-    const mailOptions = {
-      from: invoice.companyEmail,
+    console.log("✅ PDF generated");
+    
+    await verifyEmailConfig();
+    
+    await sendInvoiceEmail({
       to: invoice.clientEmail,
-      subject: `Invoice ${invoice.invoiceNumber} from ${invoice.companyName}`,
-      html: `
-        <h2>Invoice from ${invoice.companyName}</h2>
-        <p>Dear ${invoice.clientName},</p>
-        <p>Please find attached invoice ${invoice.invoiceNumber}.</p>
-        <p>Total Amount: ₹${invoice.total.toFixed(2)}</p>
-        <p>Thank you for your business!</p>
-      `,
-      attachments: [
-        {
-          filename: `invoice-${invoice.invoiceNumber}.pdf`,
-          content: pdfBuffer,
-        },
-      ],
-    };
-    //
-    await transporter.sendMail(mailOptions);
+      clientName: invoice.clientName,
+      invoice,
+      pdfBuffer,
+    });
 
     // Update invoice status to SENT if it was DRAFT
-    if (invoice.status === 'DRAFT') {
-      await Invoice.findByIdAndUpdate(params.id, { status: 'SENT' });
+    if (invoice.status === "DRAFT") {
+      await Invoice.findByIdAndUpdate(id, { status: "SENT" });
     }
 
     return NextResponse.json({
       success: true,
-      message: `Email functionality will be implemented. Would send to: ${invoice.clientEmail}`,
+      message: `Invoice sent successfully to ${invoice.clientEmail}`,
     });
   } catch (error: any) {
-    console.error('Email invoice error:', error);
+    console.error("❌ Email invoice error:", error);
     return NextResponse.json(
-      { error: 'Failed to send invoice email' },
+      { error: "Failed to send invoice email" },
       { status: 500 }
     );
   }

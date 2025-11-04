@@ -110,8 +110,9 @@ export async function PUT(
         { status: 403 }
       );
     }
-
-    if (!mongoose.Types.ObjectId.isValid(params.id)) {
+    const { id } = await params; 
+    
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json(
         { error: 'Invalid invoice ID' },
         { status: 400 }
@@ -120,7 +121,8 @@ export async function PUT(
 
     await dbConnect();
 
-    const invoice = await Invoice.findById(params.id);
+
+    const invoice = await Invoice.findById(id);
 
     if (!invoice) {
       return NextResponse.json(
@@ -188,8 +190,9 @@ export async function DELETE(
         { status: 403 }
       );
     }
+     const { id } = await params; 
 
-    if (!mongoose.Types.ObjectId.isValid(params.id)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json(
         { error: 'Invalid invoice ID' },
         { status: 400 }

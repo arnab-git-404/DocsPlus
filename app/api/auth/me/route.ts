@@ -1,30 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { verify } from 'jsonwebtoken';
+import { verifyAuth } from '@/lib/auth';
 import dbConnect from '@/lib/db';
 import User from '@/models/User';
 
 export async function GET(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('token')?.value;
+  
+    const payload = await verifyAuth(request);
 
-    if (!token) {
-      return NextResponse.json(
-        { error: 'Not authenticated' },
-        { status: 401 }
-      );
-    }
+    // await dbConnect();
+    // const user = await User.findById(payload?.userId).select('name email role status');
 
-    const decoded = verify(token, process.env.JWT_SECRET || 'your-secret-key') as {
-      userId: string;
-      role: string;
-    };
-
-    await dbConnect();
-    const user = await User.findById(decoded.userId).select('name email role status');
-
-    if (!user) {
+    if (!payload?.userId) {
       return NextResponse.json(
         { error: 'User not found' },
         { status: 404 }
@@ -33,11 +22,11 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       user: {
-        id: user._id.toString(),
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        status: user.status,
+        id: payload.userId,
+        name: payload.name,
+        email: payload.email,
+        role: payload.role,
+        status: payload.status,
       },
     });
   } catch (error) {
