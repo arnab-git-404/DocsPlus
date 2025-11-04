@@ -102,6 +102,12 @@ const Navbar = ({ user }: NavbarProps) => {
                           Invoices
                         </Link>
                       </Button>
+                      <Button variant="ghost" asChild>
+                        <Link href="/dashboard/admin/offer-letters">
+                          <FileText className="mr-2 h-4 w-4" />
+                          Offer Letters
+                        </Link>
+                      </Button>
                     </>
                   ) : (
                     <>
