@@ -261,7 +261,7 @@ export default function EmployeesPage() {
   const stats = {
     total: pagination?.totalEmployees,
     active: employees.filter(e => e.status === 'ACTIVE').length,
-    inactive: employees.filter(e => e.status === 'INACTIVE').length,
+    inactive: employees.filter(e => e.status === 'INACTIVE' || e.status === 'PENDING').length,
   };
 
   if (loading && currentPage === 1) {
