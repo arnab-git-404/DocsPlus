@@ -5,7 +5,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
-// import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -25,13 +25,13 @@ interface Employee {
 }
 
 export default function GenerateSalarySlipPage() {
-  // const { user } = useAuth();
+  const { user } = useAuth();
   
-  const user: { name: string; email: string; role: "ADMIN" | "EMPLOYEE" } = {
-    name: "John Doe",
-    email: "example@gmail.com",
-    role: "ADMIN",
-  };
+  // const user: { name: string; email: string; role: "ADMIN" | "EMPLOYEE" } = {
+  //   name: "John Doe",
+  //   email: "example@gmail.com",
+  //   role: "ADMIN",
+  // };
 
   const router = useRouter();
   const signatureInputRef = useRef<HTMLInputElement>(null);
@@ -89,7 +89,7 @@ export default function GenerateSalarySlipPage() {
 
   const fetchEmployees = async () => {
     try {
-      const response = await fetch('/api/admin/employees');
+      const response = await fetch('/api/admin/salary-slip-employees');
       if (response.ok) {
         const data = await response.json();
         console.log('Fetched employees:', data.employees);
