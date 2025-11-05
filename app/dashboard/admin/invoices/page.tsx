@@ -32,11 +32,11 @@ export default function InvoicePage() {
   };
 
   const handleView = (id: string) => {
-    router.push(`/dashboard/invoices/view/${id}`);
+    router.push(`/dashboard/admin/invoices/view/${id}`);
   };
 
   const handleEdit = (id: string) => {
-    router.push(`/dashboard/invoices/edit/${id}`);
+    router.push(`/dashboard/admin/invoices/edit/${id}`);
   };
 
   const handleDelete = async (id: string) => {

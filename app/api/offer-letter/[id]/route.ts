@@ -5,25 +5,6 @@ import dbConnect from '@/lib/db';
 import OfferLetter from '@/models/OfferLetter';
 import mongoose from 'mongoose';
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'your-secret-key-change-in-production'
-);
-
-async function verifyAuth(request: NextRequest) {
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('auth-token')?.value;
-
-    if (!token) {
-      return null;
-    }
-
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-    return payload;
-  } catch (error) {
-    return null;
-  }
-}
 
 // GET - Fetch single offer letter
 export async function GET(
@@ -31,21 +12,23 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user = await verifyAuth(request);
+    // const user = await verifyAuth(request);
 
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    // if (!user) {
+    //   return NextResponse.json(
+    //     { error: 'Unauthorized' },
+    //     { status: 401 }
+    //   );
+    // }
 
-    if (user.role !== 'ADMIN') {
-      return NextResponse.json(
-        { error: 'Access denied. Admin only.' },
-        { status: 403 }
-      );
-    }
+    // if (user.role !== 'ADMIN') {
+    //   return NextResponse.json(
+    //     { error: 'Access denied. Admin only.' },
+    //     { status: 403 }
+    //   );
+    // }
+
+    const userId = request.headers.get('x-user-id');
 
     const { id } = await params;
 
@@ -67,7 +50,7 @@ export async function GET(
       );
     }
 
-    if (offerLetter.createdBy.toString() !== user.userId) {
+    if (offerLetter.createdBy.toString() !== userId) {
       return NextResponse.json(
         { error: 'Access denied' },
         { status: 403 }
@@ -93,21 +76,24 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user = await verifyAuth(request);
+    // const user = await verifyAuth(request);
 
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    // if (!user) {
+    //   return NextResponse.json(
+    //     { error: 'Unauthorized' },
+    //     { status: 401 }
+    //   );
+    // }
 
-    if (user.role !== 'ADMIN') {
-      return NextResponse.json(
-        { error: 'Access denied. Admin only.' },
-        { status: 403 }
-      );
-    }
+    // if (user.role !== 'ADMIN') {
+    //   return NextResponse.json(
+    //     { error: 'Access denied. Admin only.' },
+    //     { status: 403 }
+    //   );
+    // }
+
+        const userId = request.headers.get('x-user-id');
+
 
     const { id } = await params;
 
@@ -129,7 +115,7 @@ export async function PUT(
       );
     }
 
-    if (offerLetter.createdBy.toString() !== user.userId) {
+    if (offerLetter.createdBy.toString() !== userId) {
       return NextResponse.json(
         { error: 'Access denied' },
         { status: 403 }
@@ -172,21 +158,23 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user = await verifyAuth(request);
+    // const user = await verifyAuth(request);
 
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    // if (!user) {
+    //   return NextResponse.json(
+    //     { error: 'Unauthorized' },
+    //     { status: 401 }
+    //   );
+    // }
 
-    if (user.role !== 'ADMIN') {
-      return NextResponse.json(
-        { error: 'Access denied. Admin only.' },
-        { status: 403 }
-      );
-    }
+    // if (user.role !== 'ADMIN') {
+    //   return NextResponse.json(
+    //     { error: 'Access denied. Admin only.' },
+    //     { status: 403 }
+    //   );
+    // }
+
+    const userId = request.headers.get('x-user-id');
 
     const { id } = await params;
 
@@ -208,7 +196,7 @@ export async function DELETE(
       );
     }
 
-    if (offerLetter.createdBy.toString() !== user.userId) {
+    if (offerLetter.createdBy.toString() !== userId) {
       return NextResponse.json(
         { error: 'Access denied' },
         { status: 403 }

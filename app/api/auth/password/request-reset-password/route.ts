@@ -1,56 +1,27 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { jwtVerify } from 'jose';
-import dbConnect from '@/lib/db';
-import User from '@/models/User';
-import crypto from 'crypto';
-import { sendGenericEmail } from '@/lib/mail';
-
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'your-secret-key-change-in-production'
-);
-
-async function verifyAuth(request: NextRequest) {
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('auth-token')?.value;
-
-    if (!token) {
-      return null;
-    }
-
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-    return payload;
-  } catch (error) {
-    return null;
-  }
-}
+import { NextRequest, NextResponse } from "next/server";
+import dbConnect from "@/lib/db";
+import User from "@/models/User";
+import crypto from "crypto";
+import { sendGenericEmail } from "@/lib/mail";
 
 export async function POST(request: NextRequest) {
   try {
-    const user = await verifyAuth(request);
+    const userId = request.headers.get("x-user-id");
 
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     await dbConnect();
 
-    // Find user
-    const dbUser = await User.findById(user.userId);
+    const dbUser = await User.findById(userId);
 
     if (!dbUser) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     // Generate password reset token
-    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetToken = crypto.randomBytes(32).toString("hex");
     const resetExpiry = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
 
     dbUser.passwordResetToken = resetToken;
@@ -58,13 +29,15 @@ export async function POST(request: NextRequest) {
     await dbUser.save();
 
     // Create reset URL
-    const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/reset-password/?resetToken=${resetToken}`;
+    const resetUrl = `${
+      process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+    }/reset-password/?resetToken=${resetToken}`;
 
     // Send email
     await sendGenericEmail({
       to: dbUser.email,
-      subject: 'Password Reset Request',
-      title: 'Reset Your Password',
+      subject: "Password Reset Request",
+      title: "Reset Your Password",
       content: `
         <p>Hello ${dbUser.name},</p>
         <p>You requested to reset your password. Click the button below to set a new password:</p>
@@ -79,18 +52,18 @@ export async function POST(request: NextRequest) {
         <p>If the button doesn't work, copy and paste this link into your browser:</p>
         <p style="word-break: break-all; color: #667eea;">${resetUrl}</p>
       `,
-      buttonText: 'Reset Password',
+      buttonText: "Reset Password",
       buttonUrl: resetUrl,
     });
 
     return NextResponse.json({
       success: true,
-      message: 'Password reset link sent to your email',
+      message: "Password reset link sent to your email",
     });
   } catch (error: any) {
-    console.error('Password reset request error:', error);
+    console.error("Password reset request error:", error);
     return NextResponse.json(
-      { error: 'Failed to send reset link' },
+      { error: "Failed to send reset link" },
       { status: 500 }
     );
   }

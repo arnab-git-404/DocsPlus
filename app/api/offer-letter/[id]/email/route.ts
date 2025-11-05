@@ -7,25 +7,6 @@ import mongoose from 'mongoose';
 import { sendGenericEmail, verifyEmailConfig } from '@/lib/mail';
 import puppeteer from 'puppeteer';
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'your-secret-key-change-in-production'
-);
-
-async function verifyAuth(request: NextRequest) {
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('auth-token')?.value;
-
-    if (!token) {
-      return null;
-    }
-
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-    return payload;
-  } catch (error) {
-    return null;
-  }
-}
 
 async function generateOfferLetterPDF(offer: any): Promise<Buffer> {
   const browser = await puppeteer.launch({
@@ -170,15 +151,17 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user = await verifyAuth(request);
+    // const user = await verifyAuth(request);
 
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const userId = request.headers.get('x-user-id');
 
-    if (user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Access denied. Admin only.' }, { status: 403 });
-    }
+    // if (!user) {
+    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // }
+
+    // if (user.role !== 'ADMIN') {
+    //   return NextResponse.json({ error: 'Access denied. Admin only.' }, { status: 403 });
+    // }
 
     const { id } = await params;
 
@@ -205,7 +188,7 @@ export async function POST(
       return NextResponse.json({ error: 'Offer letter not found' }, { status: 404 });
     }
 
-    if (offerLetter.createdBy.toString() !== user.userId) {
+    if (offerLetter.createdBy.toString() !== userId) {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 

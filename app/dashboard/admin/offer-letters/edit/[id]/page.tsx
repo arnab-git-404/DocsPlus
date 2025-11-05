@@ -254,7 +254,7 @@ export default function EditOfferLetterPage() {
           <Button
             variant="outline"
             size="icon"
-            onClick={() => router.push(`/dashboard/admin/offer-letters/${id}`)}
+            onClick={() => router.back()} 
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>

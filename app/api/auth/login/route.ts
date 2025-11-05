@@ -9,7 +9,7 @@ import dbConnect from '@/lib/db';
 
 
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'your-secret-key-change-in-production'
+  process.env.JWT_ACCESS_SECRET
 );
 
 export async function POST(request: NextRequest) {

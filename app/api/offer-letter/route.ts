@@ -4,44 +4,21 @@ import { jwtVerify } from 'jose';
 import dbConnect from '@/lib/db';
 import OfferLetter from '@/models/OfferLetter';
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'your-secret-key-change-in-production'
-);
-
-async function verifyAuth(request: NextRequest) {
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('auth-token')?.value;
-
-    if (!token) {
-      return null;
-    }
-
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-    return payload;
-  } catch (error) {
-    return null;
-  }
-}
 
 // GET - List all offer letters
 export async function GET(request: NextRequest) {
   try {
-    const user = await verifyAuth(request);
+    // const user = await verifyAuth(request);
+    const userId = request.headers.get('x-user-id');
 
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
 
-    if (user.role !== 'ADMIN') {
-      return NextResponse.json(
-        { error: 'Access denied. Admin only.' },
-        { status: 403 }
-      );
-    }
+
+    // if (user.role !== 'ADMIN') {
+    //   return NextResponse.json(
+    //     { error: 'Access denied. Admin only.' },
+    //     { status: 403 }
+    //   );
+    // }
 
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
@@ -51,7 +28,7 @@ export async function GET(request: NextRequest) {
 
     await dbConnect();
 
-    const query: any = { createdBy: user.userId };
+    const query: any = { createdBy: userId };
 
     if (status && status !== 'ALL') {
       query.status = status;

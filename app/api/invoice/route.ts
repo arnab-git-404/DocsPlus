@@ -5,7 +5,7 @@ import dbConnect from '@/lib/db';
 import Invoice from '@/models/Invoice';
 
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'your-secret-key-change-in-production'
+  process.env.JWT_ACCESS_SECRET
 );
 
 async function verifyAuth(request: NextRequest) {
