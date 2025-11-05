@@ -57,13 +57,30 @@ async function verifyToken(token: string) {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Get token from cookies
+  const token = request.cookies.get("auth-token")?.value;
+
+  // If user is authenticated and trying to access auth pages
+if (token && (pathname === "/login" || pathname === "/signup")) {
+  const payload = await verifyToken(token);
+  
+  if (payload) {
+    const userRole = payload.role as string;
+    
+    // Redirect to role-specific dashboard
+    if (userRole === "ADMIN") {
+      return NextResponse.redirect(new URL("/dashboard/admin", request.url));
+    } else {
+      return NextResponse.redirect(new URL("/dashboard/employee", request.url));
+    }
+  }
+}
+
   // Allow public routes
   if (matchesPattern(pathname, PUBLIC_ROUTES)) {
     return NextResponse.next();
   }
 
-  // Get token from cookies
-  const token = request.cookies.get("auth-token")?.value;
 
   // If no token, redirect to login
   if (!token) {
@@ -117,6 +134,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard/employee", request.url));
   }
 
+  
   // Redirect root dashboard to role-specific dashboard
   if (pathname === "/dashboard") {
     if (userRole === "ADMIN") {
@@ -125,6 +143,8 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(new URL("/dashboard/employee", request.url));
     }
   }
+
+    
 
   // Add user info to request headers (for API routes to access)
   const requestHeaders = new Headers(request.headers);

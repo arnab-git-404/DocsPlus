@@ -89,9 +89,9 @@ const Navbar = ( ) => {
                         </Link>
                       </Button>
                       <Button variant="ghost" asChild>
-                        <Link href="/dashboard/admin/users">
+                        <Link href="/dashboard/admin/employees">
                           <User className="mr-2 h-4 w-4" />
-                          Users
+                          Employees
                         </Link>
                       </Button>
                       <Button variant="ghost" asChild>
