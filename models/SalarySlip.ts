@@ -40,6 +40,7 @@ export interface ISalarySlip extends Document {
   signature?: string; // Base64 or URL
   watermark: boolean;
   generatedBy: mongoose.Types.ObjectId;
+  sentAt: Date;
   status: 'DRAFT' | 'GENERATED' | 'SENT';
   createdAt: Date;
   updatedAt: Date;
@@ -126,6 +127,9 @@ const SalarySlipSchema = new Schema<ISalarySlip>(
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
+    },
+    sentAt:{
+      type: Date,
     },
     status: {
       type: String,

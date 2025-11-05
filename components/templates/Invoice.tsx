@@ -1,7 +1,5 @@
-"use client";
 
-import { PDFViewer, PDFDownloadLink, Document, Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
-import { useState, useEffect } from "react";
+import {  Document, Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
 
 // Professional Invoice Styles
 const styles = StyleSheet.create({

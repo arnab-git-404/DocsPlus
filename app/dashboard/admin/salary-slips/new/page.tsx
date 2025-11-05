@@ -197,7 +197,7 @@ export default function GenerateSalarySlipPage() {
     setLoading(true);
 
     try {
-      const response = await fetch('/dashboard/salary-slips/api/save', {
+      const response = await fetch('/dashboard/admin/salary-slips/api/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

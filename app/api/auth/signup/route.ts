@@ -6,6 +6,7 @@ import dbConnect from '@/lib/db';
 import User from '@/models/User';
 import { sendActivationEmail } from '@/lib/mail';
 
+
 export async function POST(request: NextRequest) {
   try {
     // const cookieStore = cookies();
