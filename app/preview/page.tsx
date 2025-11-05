@@ -1,4 +1,6 @@
 "use client";
+export const dynamic = 'force-dynamic'
+
 
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
@@ -9,7 +11,7 @@ import { SalarySlipDocument } from '@/components/templates/SalarySlip';
 
 function PDFPreviewContent() {
   const searchParams = useSearchParams();
-  const type = searchParams.get('type'); // 'invoice', 'offer-letter', 'salary-slip'
+  const type = searchParams.get('type'); 
   const id = searchParams.get('id');
   
   const [data, setData] = useState<any>(null);
