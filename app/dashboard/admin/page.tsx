@@ -150,7 +150,7 @@ export default  function AdminDashboardPage() {
               <span className="text-sm font-medium">Add New User</span>
             </Link>
             <Link
-              href="/dashboard/admin/salary-slip"
+              href="/dashboard/admin/salary-slips/new"
               className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-lg hover:border-primary transition-colors cursor-pointer group"
             >
               <FileText className="h-8 w-8 mb-2 text-muted-foreground group-hover:text-primary" />
