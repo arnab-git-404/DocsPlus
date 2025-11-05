@@ -57,7 +57,7 @@ interface Employee {
   department: string;
   joiningDate: string;
   salary: number;
-  status: 'ACTIVE' | 'INACTIVE';
+  status: 'ACTIVE' | 'INACTIVE' | 'PENDING';
   createdAt: string;
 }
 
