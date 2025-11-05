@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
   <div className="text-center space-y-6">
-    <h1 className="text-4xl font-bold">Welcome to Slip Generator</h1>
+    <h1 className="text-4xl font-bold">Welcome! Document & Payroll Management Portal</h1>
     <div className="flex justify-center">
       <Button 
         onClick={() => router.push('/login')}
