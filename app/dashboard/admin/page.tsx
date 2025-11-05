@@ -1,83 +1,76 @@
-import { cookies } from 'next/headers';
+
+'use client';
+
 import { verify } from 'jsonwebtoken';
-import { redirect } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import dbConnect from '@/lib/db';
 import User from '@/models/User';
+import SalarySlip from '@/models/SalarySlip';
+import Invoice from '@/models/Invoice';
+import OfferLetter from '@/models/OfferLetter';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, FileText, Receipt, Mail, TrendingUp, Activity } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
-async function getDashboardStats() {
-  try {
-    await dbConnect();
-    
-    const totalUsers = await User.countDocuments({ role: 'EMPLOYEE' });
-    const activeUsers = await User.countDocuments({ role: 'EMPLOYEE', status: 'ACTIVE' });
-    const pendingUsers = await User.countDocuments({ role: 'EMPLOYEE', status: 'PENDING' });
-    
-    return {
-      totalUsers,
-      activeUsers,
-      pendingUsers,
-      totalSalarySlips: 0, // Will implement later
-      totalInvoices: 0, // Will implement later
-      totalOfferLetters: 0, // Will implement later
-    };
-  } catch (error) {
-    console.error('Dashboard stats error:', error);
-    return {
-      totalUsers: 0,
-      activeUsers: 0,
-      pendingUsers: 0,
-      totalSalarySlips: 0,
-      totalInvoices: 0,
-      totalOfferLetters: 0,
-    };
-  }
+
+interface DashboardStats {
+  totalUsers: number;
+  activeUsers: number;
+  pendingUsers: number;
+  totalSalarySlips: number;
+  totalInvoices: number;
+  totalOfferLetters: number;
 }
 
-async function getAdminUser() {
-  try {
-    const cookieStore = cookies();
-    const token = cookieStore.get('token')?.value;
+export default  function AdminDashboardPage() {
+  const { user , refreshUser } = useAuth();
+  const router = useRouter();
 
-    if (!token) {
-      return null;
-    }
-
-    const decoded = verify(token, process.env.JWT_SECRET || 'your-secret-key') as {
-      userId: string;
-      role: string;
-    };
-
-    if (decoded.role !== 'ADMIN') {
-      return null;
-    }
-
-    await dbConnect();
-    const user = await User.findById(decoded.userId).select('name email role');
-
-    return user;
-  } catch (error) {
-    return null;
-  }
-}
-
-export default async function AdminDashboardPage() {
-//   const user = await getAdminUser();
+  const [stats, setStats] = useState<DashboardStats>({
+    totalUsers: 0,
+    activeUsers: 0,
+    pendingUsers: 0,
+    totalSalarySlips: 0,
+    totalInvoices: 0,
+    totalOfferLetters: 0,
+  });
+ const [loading, setLoading] = useState(true);
   
-        const user: { name: string; email: string; role: 'ADMIN' | 'EMPLOYEE' } = {
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-        role: 'ADMIN',
-        };
 
-  if (!user) {
-    redirect('/dashboard/employee');
+  useEffect(() => {
+    if( !user ){
+      router.push('/login');
+      return;
+    }
+
+    if ( user.role !== 'ADMIN' ) {
+      router.push('/dashboard/employee');
+      return;
+    }
+    
+    fetchStats();
+  }, [user, router]);
+
+
+  const fetchStats = async () => {
+    try{
+      setLoading(true);
+      const response =  await fetch('/api/admin/dashboard-stats');
+      
+      if( !response.ok ){
+        throw new Error('Failed to fetch Dashboard stats');
+      }
+      
+      const data = await response.json();
+      setStats(data);
+    }catch(error){
+      console.error('Error fetching dashboard stats:', error);
+    }finally{
+      setLoading(false);
+    }
   }
-
-  const stats = await getDashboardStats();
-
   const statCards = [
     {
       title: 'Total Employees',
@@ -119,7 +112,7 @@ export default async function AdminDashboardPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
         <p className="text-muted-foreground mt-2">
-          Welcome back, {user.name}! Here's what's happening today.
+          Welcome back, {user?.name}! Here's what's happening today.
         </p>
       </div>
 
@@ -150,14 +143,14 @@ export default async function AdminDashboardPage() {
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Link
-              href="/dashboard/admin/users/new"
+              href="/dashboard/admin/user/new"
               className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-lg hover:border-primary transition-colors cursor-pointer group"
             >
               <Users className="h-8 w-8 mb-2 text-muted-foreground group-hover:text-primary" />
               <span className="text-sm font-medium">Add New User</span>
             </Link>
             <Link
-              href="/dashboard/admin/salary-slips"
+              href="/dashboard/admin/salary-slip"
               className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-lg hover:border-primary transition-colors cursor-pointer group"
             >
               <FileText className="h-8 w-8 mb-2 text-muted-foreground group-hover:text-primary" />
@@ -230,15 +223,15 @@ export default async function AdminDashboardPage() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Salary Slips Generated</span>
-                <span className="text-sm font-bold">0</span>
+                <span className="text-sm font-bold">{stats.totalSalarySlips}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Invoices Created</span>
-                <span className="text-sm font-bold">0</span>
+                <span className="text-sm font-bold">{stats.totalInvoices}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Offer Letters Sent</span>
-                <span className="text-sm font-bold">0</span>
+                <span className="text-sm font-bold">{stats.totalOfferLetters}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">New Employees</span>

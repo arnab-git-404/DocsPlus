@@ -44,6 +44,7 @@ const OfferLetterSchema = new Schema<IOfferLetter>(
       type: String,
       required: true,
       unique: true,
+      index: true,
     },
     candidateName: {
       type: String,
@@ -178,7 +179,6 @@ const OfferLetterSchema = new Schema<IOfferLetter>(
   }
 );
 
-OfferLetterSchema.index({ offerNumber: 1 });
 OfferLetterSchema.index({ candidateEmail: 1 });
 OfferLetterSchema.index({ status: 1 });
 OfferLetterSchema.index({ createdBy: 1 });
