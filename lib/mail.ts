@@ -273,50 +273,50 @@ export async function sendActivationEmail({
 //   }
 // }
 
-// // 4. Generic Email (for custom messages)
-// interface SendGenericEmailParams {
-//   to: string;
-//   subject: string;
-//   title: string;
-//   content: string;
-//   buttonText?: string;
-//   buttonUrl?: string;
-// }
+// 4. Generic Email (for custom messages)
+interface SendGenericEmailParams {
+  to: string;
+  subject: string;
+  title: string;
+  content: string;
+  buttonText?: string;
+  buttonUrl?: string;
+}
 
-// export async function sendGenericEmail({
-//   to,
-//   subject,
-//   title,
-//   content,
-//   buttonText,
-//   buttonUrl,
-// }: SendGenericEmailParams) {
-//   try {
-//     const transporter = createTransporter();
+export async function sendGenericEmail({
+  to,
+  subject,
+  title,
+  content,
+  buttonText,
+  buttonUrl,
+}: SendGenericEmailParams) {
+  try {
+    const transporter = createTransporter();
 
-//     let emailContent = content;
+    let emailContent = content;
 
-//     if (buttonText && buttonUrl) {
-//       emailContent += `
-//         <div style="text-align: center; margin: 30px 0;">
-//           <a href="${buttonUrl}" class="button">${buttonText}</a>
-//         </div>
-//       `;
-//     }
+    if (buttonText && buttonUrl) {
+      emailContent += `
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${buttonUrl}" class="button">${buttonText}</a>
+        </div>
+      `;
+    }
 
-//     await transporter.sendMail({
-//       from: `"Hackence Services" <${process.env.SMTP_USER}>`,
-//       to,
-//       subject,
-//       html: wrapEmailTemplate(title, emailContent),
-//     });
+    await transporter.sendMail({
+      from: `"Hackence Services" <${process.env.SMTP_USER}>`,
+      to,
+      subject,
+      html: wrapEmailTemplate(title, emailContent),
+    });
 
-//     console.log(`✅ Generic email sent to ${to}`);
-//   } catch (error) {
-//     console.error('❌ Send generic email error:', error);
-//     throw new Error('Failed to send email');
-//   }
-// }
+    console.log(`✅ Generic email sent to ${to}`);
+  } catch (error) {
+    console.error('❌ Send generic email error:', error);
+    throw new Error('Failed to send email');
+  }
+}
 
 // // 5. Verify email configuration
 // export async function verifyEmailConfig(): Promise<boolean> {
