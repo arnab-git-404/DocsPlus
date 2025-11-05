@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -27,8 +27,6 @@ import { Loader2, AlertCircle, CheckCircle2 , Eye, EyeOff} from 'lucide-react';
 
 const LoginPage = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const message = searchParams.get('message');
   const { refreshUser } = useAuth();
 
   const [formData, setFormData] = useState({
@@ -98,14 +96,6 @@ const LoginPage = () => {
         
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
-            {message && (
-              <Alert className="border-green-200 bg-green-50">
-                <CheckCircle2 className="h-4 w-4 text-green-600" />
-                <AlertDescription className="text-green-800">
-                  {message}
-                </AlertDescription>
-              </Alert>
-            )}
             
             {error && (
               <Alert variant="destructive">
