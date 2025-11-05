@@ -189,8 +189,8 @@ export default function OfferLettersPage() {
   };
 
   return (
-    <div className="min-h-screen  p-4 md:p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="min-h-screen ">
+      <div className=" mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
@@ -211,7 +211,7 @@ export default function OfferLettersPage() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Card
             className="cursor-pointer hover:shadow-lg transition-shadow"
             onClick={() => setStatusFilter("ALL")}
@@ -272,7 +272,8 @@ export default function OfferLettersPage() {
             </CardContent>
           </Card>
 
-          <Card
+          {/* Offer Letter Rejected Card */}
+          {/* <Card
             className="cursor-pointer hover:shadow-lg transition-shadow"
             onClick={() => setStatusFilter("REJECTED")}
           >
@@ -285,7 +286,7 @@ export default function OfferLettersPage() {
                 <XCircle className="h-8 w-8 text-red-600" />
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
         </div>
 
         {/* Message Alert */}
