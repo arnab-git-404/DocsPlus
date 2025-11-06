@@ -348,7 +348,7 @@ export default function EmployeeDashboardPage() {
 
   const downloadSalarySlip = async (slipId: string, month: string, year: number) => {
     try {
-      const response = await fetch(`/api/employee/salary-slips/${slipId}/download`);
+      const response = await fetch(`/api/employee/download/${slipId}`);
       // have to update this api after lunch 
 
       if (!response.ok) {
@@ -545,7 +545,10 @@ export default function EmployeeDashboardPage() {
                   </div>
                   <Button 
                     className="w-full mt-4" 
-                    onClick={() => downloadSalarySlip(currentMonthSlip._id, currentMonthSlip.month, currentMonthSlip.year)}
+                    onClick={() => downloadSalarySlip(
+                      currentMonthSlip._id, 
+                      currentMonthSlip.salary.month, 
+                      currentMonthSlip.salary.year)}
                   >
                     <Download className="mr-2 h-4 w-4" />
                     Download Slip
@@ -590,7 +593,11 @@ export default function EmployeeDashboardPage() {
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => downloadSalarySlip(slip._id, slip.month, slip.year)}
+                          onClick={() => downloadSalarySlip(
+                            slip._id, 
+                            slip.salary.month, 
+                            slip.salary.year
+                          )}
                         >
                           <Download className="h-4 w-4" />
                         </Button>
@@ -651,7 +658,11 @@ export default function EmployeeDashboardPage() {
                         </div>
                         <Button
                           size="sm"
-                          onClick={() => downloadSalarySlip(slip._id, slip.salary.month, slip.salary.year)}
+                          onClick={() => downloadSalarySlip(
+                            slip._id, 
+                            slip.salary.month, 
+                            slip.salary.year
+                          )}
                         >
                           <Download className="mr-2 h-4 w-4" />
                           Download
