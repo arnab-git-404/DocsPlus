@@ -477,6 +477,7 @@ import {
 } from 'lucide-react';
 import { pdf } from '@react-pdf/renderer';
 import { InvoiceDocument } from '@/components/templates/Invoice';
+import { toast } from 'react-hot-toast';
 
 interface InvoiceData {
   _id: string;
@@ -588,6 +589,9 @@ export default function ViewInvoicePage() {
   const handleDownloadPDF = async () => {
     if (!invoice) return;
 
+      const toastId = toast.loading("Downloading Invoice ...");
+
+
     try {
       setDownloadLoading(true);
       console.log('📥 Generating PDF...');
@@ -606,6 +610,7 @@ export default function ViewInvoicePage() {
       URL.revokeObjectURL(url);
 
       setMessage({ type: 'success', text: 'PDF downloaded successfully!' });
+      toast.success("Invoice Downloaded Successfully !", { id: toastId });
     } catch (error) {
       console.error('Download error:', error);
       setMessage({ type: 'error', text: 'Failed to download PDF' });
@@ -617,6 +622,7 @@ export default function ViewInvoicePage() {
   const handleSendEmail = async () => {
     if (!confirm('Are you sure you want to send this invoice?')) return;
 
+    const toastId = toast.loading(`Sending Invoice ...`);
     try {
       setActionLoading(true);
       const response = await fetch(`/api/invoice/${id}/email`, {
@@ -630,6 +636,7 @@ export default function ViewInvoicePage() {
         // Refresh data
         localStorage.removeItem(`invoice_${id}`);
         fetchInvoice();
+        toast.success("Invoice Sent Successfully !", { id: toastId });
       } else {
         setMessage({ type: 'error', text: data.error || 'Failed to send invoice' });
       }
@@ -642,6 +649,8 @@ export default function ViewInvoicePage() {
 
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete this invoice? This action cannot be undone.')) return;
+
+    const toastId = toast.loading("Deleting Invoice ...");
 
     try {
       setActionLoading(true);
@@ -657,6 +666,7 @@ export default function ViewInvoicePage() {
         setTimeout(() => {
           router.push('/dashboard/admin/invoices');
         }, 2000);
+        toast.success("Invoice Deleted Successfully !", { id: toastId });
       } else {
         setMessage({ type: 'error', text: data.error || 'Failed to delete invoice' });
       }

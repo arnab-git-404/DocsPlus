@@ -184,9 +184,12 @@ export async function POST(
       );
     }
 
+
+    const {id} = await params;
+
     await dbConnect();
 
-    const invoice = await Invoice.findById(params.id);
+    const invoice = await Invoice.findById(id);
 
     if (!invoice) {
       return NextResponse.json(

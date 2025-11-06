@@ -7,6 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
+import { OfferLetterDocument } from '@/components/templates/OfferLetter';
+import { pdf } from '@react-pdf/renderer';
+
 import {
   ArrowLeft,
   Edit,
@@ -27,6 +30,7 @@ import {
   FileEdit,
   Eye,
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 interface OfferLetter {
   _id: string;
@@ -98,6 +102,8 @@ export default function ViewOfferLetterPage() {
   const handleSendEmail = async () => {
     if (!confirm('Are you sure you want to send this offer letter?')) return;
 
+    const toastId = toast.loading("Sending Offer Letter ...");
+
     try {
       setActionLoading(true);
       const response = await fetch(`/api/offer-letter/${id}/email`, {
@@ -109,6 +115,7 @@ export default function ViewOfferLetterPage() {
       if (response.ok) {
         setMessage({ type: 'success', text: data.message });
         fetchOfferLetter();
+        toast.success("Offer Letter Sent Successfully !", { id: toastId });
       } else {
         setMessage({ type: 'error', text: data.error || 'Failed to send offer letter' });
       }
@@ -121,6 +128,8 @@ export default function ViewOfferLetterPage() {
 
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete this offer letter? This action cannot be undone.')) return;
+
+    const toastId = toast.loading("Deleting Offer Letter ...");
 
     try {
       setActionLoading(true);
@@ -135,6 +144,7 @@ export default function ViewOfferLetterPage() {
         setTimeout(() => {
           router.push('/dashboard/admin/offer-letters');
         }, 2000);
+        toast.success("Offer Letter Deleted Successfully !", { id: toastId });
       } else {
         setMessage({ type: 'error', text: data.error || 'Failed to delete offer letter' });
       }
@@ -163,6 +173,42 @@ export default function ViewOfferLetterPage() {
       </Badge>
     );
   };
+
+
+  const handleDownloadPDF = async () => {
+
+    if (!offerLetter) return;
+
+    try {
+      // setDownloadLoading(true);
+      console.log('📥 Generating PDF...');
+      const toastId = toast.loading('Downloading PDF...');
+
+      // Generate PDF blob
+      const blob = await pdf(<OfferLetterDocument data={offerLetter} />).toBlob();
+
+      // Create download link
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${offerLetter.offerNumber}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      setMessage({ type: 'success', text: 'PDF downloaded successfully!' });
+      toast.success('PDF downloaded successfully!', { id: toastId });
+    } catch (error) {
+      console.error('Download error:', error);
+      setMessage({ type: 'error', text: 'Failed to download PDF' });
+    } finally {
+      // setDownloadLoading(false);
+    }
+  };
+
+
+
 
   if (loading) {
     return (
@@ -260,7 +306,7 @@ export default function ViewOfferLetterPage() {
             Send Email
           </Button>
           <Button
-            onClick={() => window.open(`/api/offer-letters/${id}/pdf`, '_blank')}
+            onClick={() => handleDownloadPDF()}
             variant="outline"
             disabled={actionLoading}
           >

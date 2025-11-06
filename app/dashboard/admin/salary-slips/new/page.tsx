@@ -451,7 +451,9 @@ export default function GenerateSalarySlipPage() {
                 </div>
 
                   
-                                      <div className="space-y-2">
+
+                  {/* After exam  -------------------------------------------------- finish This */}
+                                      {/* <div className="space-y-2">
                                         <Label htmlFor="bonusTitle">Bonus (if any)</Label>
                                         <Input
                                           id="bonusTitle"
@@ -462,9 +464,9 @@ export default function GenerateSalarySlipPage() {
                                           onChange={handleChange}
                                           disabled={loading}
                                         />
-                                      </div>
+                                      </div> */}
 
-                                      <div className="space-y-2">
+                                      {/* <div className="space-y-2">
                       <Label htmlFor="bonusAmount">Bonus Amount</Label>
                       <Input
                         id="bonusAmount"
@@ -477,7 +479,7 @@ export default function GenerateSalarySlipPage() {
                         min="0"
                         step="0.01"
                       />
-                    </div>    
+                    </div>     */}
 
                 <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="otherAllowances">Other Allowances</Label>

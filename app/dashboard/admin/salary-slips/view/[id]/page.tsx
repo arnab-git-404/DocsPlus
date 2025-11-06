@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { pdf } from '@react-pdf/renderer';
 import { SalarySlipDocument } from '@/components/templates/SalarySlip';
+import { toast } from 'react-hot-toast';
 
 interface SalarySlipData {
   _id: string;
@@ -131,6 +132,8 @@ export default function ViewSalarySlipPage() {
   const handleDownloadPDF = async () => {
     if (!salarySlip) return;
 
+    const toastId = toast.loading("Generating PDF...");
+
     try {
       setDownloadLoading(true);
       console.log('📥 Generating PDF...');
@@ -146,6 +149,7 @@ export default function ViewSalarySlipPage() {
       URL.revokeObjectURL(url);
 
       setMessage({ type: 'success', text: 'PDF downloaded successfully!' });
+      toast.success("PDF downloaded successfully!", { id: toastId });
     } catch (error) {
       console.error('Download error:', error);
       setMessage({ type: 'error', text: 'Failed to download PDF' });
@@ -156,6 +160,8 @@ export default function ViewSalarySlipPage() {
 
   const handleSendEmail = async () => {
     if (!confirm('Send this salary slip via email?')) return;
+    
+    const toastId = toast.loading("Sending Salary Slip ...");
 
     try {
       setActionLoading(true);
@@ -169,6 +175,7 @@ export default function ViewSalarySlipPage() {
         setMessage({ type: 'success', text: 'Salary slip sent successfully!' });
         localStorage.removeItem(`salary_slip_${id}`);
         fetchSalarySlip();
+        toast.success("Salary Slip Sent Successfully !", { id: toastId });
       } else {
         setMessage({ type: 'error', text: data.error || 'Failed to send' });
       }
@@ -182,6 +189,8 @@ export default function ViewSalarySlipPage() {
   const handleDelete = async () => {
     if (!confirm('Delete this salary slip? This action cannot be undone.')) return;
 
+    const toastId = toast.loading("Deleting Salary Slip ...");
+
     try {
       setActionLoading(true);
       const response = await fetch(`/api/salary-slip/${id}`, {
@@ -194,6 +203,7 @@ export default function ViewSalarySlipPage() {
         setTimeout(() => {
           router.push('/dashboard/admin/salary-slips');
         }, 2000);
+        toast.success("Salary Slip Deleted Successfully !", { id: toastId });
       }
     } catch (error) {
       setMessage({ type: 'error', text: 'Failed to delete' });
