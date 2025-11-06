@@ -248,17 +248,18 @@ const EmployeeSchema = new Schema<IEmployee>(
           },
         },
       },
-      bonus: {
-        title:{
-          type: String,
-          trim: true,
-          default: "",
-        },
-        amount: {
-          type: Number,
-          default: 0,
-        }
-      },
+      // bonus: {
+      //   title:{
+      //     type: String,
+      //     trim: true,
+      //     default: "",
+      //   },
+      //   amount: {
+      //     type: Number,
+      //     default: 0,
+      //   }
+      // },
+      
       net: {
           type: Number,
           default: 0,
@@ -282,6 +283,10 @@ const EmployeeSchema = new Schema<IEmployee>(
         type: String,
         trim: true,
         lowercase: true,
+      },
+      pfAccountNumber: {
+        type: String,
+        trim: true,
       },
     },
     documents: {

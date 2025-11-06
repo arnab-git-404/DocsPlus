@@ -1,6 +1,6 @@
+
+// GITHUB COPILOT VERSON 
 // import { NextRequest, NextResponse } from 'next/server';
-// import { cookies } from 'next/headers';
-// import { verify } from 'jsonwebtoken';
 // import crypto from 'crypto';
 // import dbConnect from '@/lib/db';
 // import User from '@/models/User';
@@ -35,8 +35,6 @@
 //     }
 
 //     const email = contact?.email;
-//     const phone = contact?.phone;
-//     const address = contact?.address;
 
 //     // Validate email format
 //     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -48,7 +46,7 @@
 //     }
 
 //     // Check if email already exists
-//     const existingEmail = await User.findOne({ email });
+//     const existingEmail = await User.findOne({ 'contact.email': email });
 //     if (existingEmail) {
 //       return NextResponse.json(
 //         { error: 'Email already exists' },
@@ -77,6 +75,7 @@
 //     }
 
 //     // Calculate net salary
+    
 //     const basicSal = parseFloat(salary?.basic) || 0;
 //     const hraAmt = parseFloat(salary?.hra) || 0;
 //     const transport = parseFloat(salary?.transportAllowances) || 0;
@@ -89,22 +88,20 @@
 //     const grossSalary = basicSal + hraAmt + transport + medical + bonus;
 //     const totalDeductions = pfDeduction + taxDeduction + otherDeduction;
 //     const netSalary = grossSalary - totalDeductions;
-
+    
 //     // Generate activation token
 //     const activationToken = crypto.randomBytes(32).toString('hex');
 //     const activationExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
-//     // Prepare salary details
+//     // Prepare salary details with nested structure matching your schema
 //     const salaryDetails: any = {
-//       basicSalary: basicSal,
-//       netSalary,
+//       basic: basicSal,
+//       net: netSalary,
 //     };
 
 //     if (hraAmt > 0) salaryDetails.hra = hraAmt;
 //     if (transport > 0) salaryDetails.transportAllowances = transport;
 //     if (medical > 0) salaryDetails.medicalAllowances = medical;
-//     if (pfDeduction > 0) salaryDetails.pf = pfDeduction;
-//     if (taxDeduction > 0) salaryDetails.tax = taxDeduction;
     
 //     if (salary?.bonus?.title && bonus > 0) {
 //       salaryDetails.bonus = {
@@ -113,16 +110,40 @@
 //       };
 //     }
 
+//     // Deductions nested object
+//     const deductions: any = {};
+//     if (pfDeduction > 0) deductions.pf = pfDeduction;
+//     if (taxDeduction > 0) deductions.tax = taxDeduction;
 //     if (salary?.deductions?.other?.title && otherDeduction > 0) {
-//       salaryDetails.otherDeductions = {
+//       deductions.other = {
 //         title: salary.deductions.other.title,
 //         amount: otherDeduction,
 //       };
 //     }
 
+//     if (Object.keys(deductions).length > 0) {
+//       salaryDetails.deductions = deductions;
+//     }
+
+//     // Prepare contact details
+//     const contactDetails: any = {
+//       email: contact.email,
+//     };
+//     if (contact?.phone) contactDetails.phone = contact.phone;
+//     if (contact?.address) contactDetails.address = contact.address;
+
+//     // Prepare job details
+//     const jobDetails: any = {
+//       department: job.department,
+//       designation: job.designation,
+//       joinDate: new Date(job.joinDate),
+//       employmentType: job?.employmentType || 'Full-time',
+//     };
+//     if (job?.manager) jobDetails.manager = job.manager;
+
 //     // Prepare bank details
 //     const bankDetails: any = {};
-//     if (bank?.name) bankDetails.bankName = bank.name;
+//     if (bank?.name) bankDetails.name = bank.name;
 //     if (bank?.accountNumber) bankDetails.accountNumber = bank.accountNumber;
 //     if (bank?.ifsc) bankDetails.ifsc = bank.ifsc;
 //     if (bank?.upi) bankDetails.upi = bank.upi;
@@ -132,7 +153,7 @@
 //     if (documents?.pan) userDocuments.pan = documents.pan;
 //     if (documents?.aadhar) userDocuments.aadhar = documents.aadhar;
 
-//     // Create user object
+//     // Create user object with NESTED structure matching your schema
 //     const userData: any = {
 //       employeeId,
 //       name,
@@ -141,20 +162,15 @@
 //       status: 'PENDING',
 //       activationToken,
 //       activationExpiry,
-//       department: job?.department,
-//       designation: job?.designation,
-//       joinDate: new Date(job?.joinDate),
-//       employmentType: job?.employmentType || 'Full-time',
+//       contact: contactDetails,
+//       job: jobDetails,
 //       salary: salaryDetails,
 //     };
 
 //     // Add optional fields if provided
 //     if (gender) userData.gender = gender;
 //     if (dob) userData.dob = new Date(dob);
-//     if (phone) userData.phone = phone;
-//     if (address) userData.address = address;
-//     if (job?.manager) userData.manager = job.manager;
-//     if (Object.keys(bankDetails).length > 0) userData.bankDetails = bankDetails;
+//     if (Object.keys(bankDetails).length > 0) userData.bank = bankDetails;
 //     if (Object.keys(userDocuments).length > 0) userData.documents = userDocuments;
 
 //     // Create user
@@ -176,12 +192,12 @@
 //           id: user._id,
 //           employeeId: user.employeeId,
 //           name: user.name,
-//           email: user.email,
+//           email: user.contact.email,
 //           role: user.role,
 //           status: user.status,
-//           department: user.department,
-//           designation: user.designation,
-//           netSalary: user.salary.netSalary,
+//           department: user.job.department,
+//           designation: user.job.designation,
+//           netSalary: user.salary.net,
 //         },
 //       },
 //       { status: 201 }
@@ -207,7 +223,8 @@
 
 
 
-// GITHUB COPILOT VERSON 
+
+// NEW 
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import dbConnect from '@/lib/db';
@@ -282,8 +299,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Calculate net salary
-    
+    // Parse salary values (these should already be calculated amounts from frontend)
     const basicSal = parseFloat(salary?.basic) || 0;
     const hraAmt = parseFloat(salary?.hra) || 0;
     const transport = parseFloat(salary?.transportAllowances) || 0;
@@ -293,9 +309,25 @@ export async function POST(request: NextRequest) {
     const taxDeduction = parseFloat(salary?.deductions?.tax) || 0;
     const otherDeduction = parseFloat(salary?.deductions?.other?.amount) || 0;
 
+    // Calculate gross and net salary
     const grossSalary = basicSal + hraAmt + transport + medical + bonus;
     const totalDeductions = pfDeduction + taxDeduction + otherDeduction;
     const netSalary = grossSalary - totalDeductions;
+
+    // Validate salary calculations
+    if (basicSal <= 0) {
+      return NextResponse.json(
+        { error: 'Basic salary must be greater than 0' },
+        { status: 400 }
+      );
+    }
+
+    if (netSalary < 0) {
+      return NextResponse.json(
+        { error: 'Net salary cannot be negative. Please check deductions.' },
+        { status: 400 }
+      );
+    }
     
     // Generate activation token
     const activationToken = crypto.randomBytes(32).toString('hex');
@@ -307,10 +339,12 @@ export async function POST(request: NextRequest) {
       net: netSalary,
     };
 
+    // Add allowances if they exist
     if (hraAmt > 0) salaryDetails.hra = hraAmt;
     if (transport > 0) salaryDetails.transportAllowances = transport;
     if (medical > 0) salaryDetails.medicalAllowances = medical;
     
+    // Add bonus if provided
     if (salary?.bonus?.title && bonus > 0) {
       salaryDetails.bonus = {
         title: salary.bonus.title,
@@ -318,7 +352,7 @@ export async function POST(request: NextRequest) {
       };
     }
 
-    // Deductions nested object
+    // Prepare deductions nested object
     const deductions: any = {};
     if (pfDeduction > 0) deductions.pf = pfDeduction;
     if (taxDeduction > 0) deductions.tax = taxDeduction;
@@ -329,6 +363,7 @@ export async function POST(request: NextRequest) {
       };
     }
 
+    // Only add deductions object if there are deductions
     if (Object.keys(deductions).length > 0) {
       salaryDetails.deductions = deductions;
     }
@@ -339,6 +374,9 @@ export async function POST(request: NextRequest) {
     };
     if (contact?.phone) contactDetails.phone = contact.phone;
     if (contact?.address) contactDetails.address = contact.address;
+    if (contact?.city) contactDetails.city = contact.city;
+    if (contact?.state) contactDetails.state = contact.state;
+    if (contact?.pincode) contactDetails.pincode = contact.pincode;
 
     // Prepare job details
     const jobDetails: any = {
@@ -355,6 +393,7 @@ export async function POST(request: NextRequest) {
     if (bank?.accountNumber) bankDetails.accountNumber = bank.accountNumber;
     if (bank?.ifsc) bankDetails.ifsc = bank.ifsc;
     if (bank?.upi) bankDetails.upi = bank.upi;
+    if (bank?.pfAccountNumber) bankDetails.pfAccountNumber = bank.pfAccountNumber;
 
     // Prepare documents
     const userDocuments: any = {};
@@ -365,7 +404,6 @@ export async function POST(request: NextRequest) {
     const userData: any = {
       employeeId,
       name,
-      email,
       role: role || 'EMPLOYEE',
       status: 'PENDING',
       activationToken,
@@ -393,6 +431,13 @@ export async function POST(request: NextRequest) {
       activationUrl,
     });
 
+    console.log('Employee created successfully:', {
+      employeeId: user.employeeId,
+      name: user.name,
+      department: user.job.department,
+      netSalary: user.salary.net,
+    });
+
     return NextResponse.json(
       {
         message: 'Employee created successfully. Activation email sent.',
@@ -405,7 +450,9 @@ export async function POST(request: NextRequest) {
           status: user.status,
           department: user.job.department,
           designation: user.job.designation,
+          basicSalary: user.salary.basic,
           netSalary: user.salary.net,
+          grossSalary: grossSalary,
         },
       },
       { status: 201 }
@@ -418,6 +465,15 @@ export async function POST(request: NextRequest) {
       const messages = Object.values(error.errors).map((err: any) => err.message);
       return NextResponse.json(
         { error: messages.join(', ') },
+        { status: 400 }
+      );
+    }
+
+    // Handle duplicate key errors
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyPattern)[0];
+      return NextResponse.json(
+        { error: `${field} already exists` },
         { status: 400 }
       );
     }

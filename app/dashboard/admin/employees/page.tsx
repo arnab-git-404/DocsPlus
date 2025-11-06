@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -13,14 +13,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,8 +30,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { Switch } from '@/components/ui/switch';
+} from "@/components/ui/alert-dialog";
+import toast from "react-hot-toast";
+import { Switch } from "@/components/ui/switch";
 import {
   Loader2,
   Search,
@@ -46,7 +47,7 @@ import {
   ChevronLeft,
   UserPlus,
   ChevronRight,
-} from 'lucide-react';
+} from "lucide-react";
 
 interface Employee {
   _id: string;
@@ -54,11 +55,15 @@ interface Employee {
   name: string;
   email: string;
   employeeId: string;
-  designation: string;
-  department: string;
-  joiningDate: string;
-  salary: number;
-  status: 'ACTIVE' | 'INACTIVE' | 'PENDING';
+  job: {
+    designation: string;
+    department: string;
+    joinDate: string;
+  };
+  salary: {
+    basic: number;
+  };
+  status: "ACTIVE" | "INACTIVE" | "PENDING";
   createdAt: string;
 }
 
@@ -69,7 +74,7 @@ interface PaginationData {
   hasMore: boolean;
 }
 
-const CACHE_KEY = 'employees_list';
+const CACHE_KEY = "employees_list";
 const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
 const ITEMS_PER_PAGE = 10;
 
@@ -79,7 +84,7 @@ export default function EmployeesPage() {
   const [filteredEmployees, setFilteredEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pagination, setPagination] = useState<PaginationData>({
     currentPage: 1,
@@ -110,7 +115,7 @@ export default function EmployeesPage() {
         if (cachedData) {
           const cached = JSON.parse(cachedData);
           if (Date.now() - cached.timestamp < CACHE_DURATION) {
-            console.log('📦 Using cached employees list');
+            console.log("📦 Using cached employees list");
             setEmployees(cached.data.employees);
             setPagination(cached.data.pagination);
             setLoading(false);
@@ -120,9 +125,11 @@ export default function EmployeesPage() {
       }
 
       // Fetch from API
-      console.log('🌐 Fetching employees from API');
-      const response = await fetch(`/api/admin/employees?page=${currentPage}&limit=${ITEMS_PER_PAGE}`);
-      
+      console.log("🌐 Fetching employees from API");
+      const response = await fetch(
+        `/api/admin/employees?page=${currentPage}&limit=${ITEMS_PER_PAGE}`
+      );
+
       if (response.ok) {
         const data = await response.json();
         setEmployees(data.employees);
@@ -139,10 +146,10 @@ export default function EmployeesPage() {
           );
         }
 
-        console.log('✅ Cached employees data');
+        console.log("✅ Cached employees data");
       }
     } catch (error) {
-      console.error('Failed to fetch employees:', error);
+      console.error("Failed to fetch employees:", error);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -167,21 +174,23 @@ export default function EmployeesPage() {
         emp.name.toLowerCase().includes(term) ||
         emp.email.toLowerCase().includes(term) ||
         emp.employeeId.toLowerCase().includes(term) ||
-        emp.designation.toLowerCase().includes(term) ||
-        emp.department.toLowerCase().includes(term)
+        emp.job.designation.toLowerCase().includes(term) ||
+        emp.job.department.toLowerCase().includes(term)
     );
 
     setFilteredEmployees(filtered);
   };
 
   const handleStatusToggle = async (id: string, currentStatus: string) => {
+    const toastId = toast.loading("Updating status...");
+
     try {
       setStatusUpdating(id);
-      const newStatus = currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+      const newStatus = currentStatus === "ACTIVE" ? "INACTIVE" : "ACTIVE";
 
       const response = await fetch(`/api/admin/employees/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
       });
 
@@ -189,15 +198,18 @@ export default function EmployeesPage() {
         // Update local state
         setEmployees((prev) =>
           prev.map((emp) =>
-            emp._id === id ? { ...emp, status: newStatus as 'ACTIVE' | 'INACTIVE' } : emp
+            emp._id === id
+              ? { ...emp, status: newStatus as "ACTIVE" | "INACTIVE" }
+              : emp
           )
         );
 
         // Clear cache
         localStorage.removeItem(CACHE_KEY);
       }
+      toast.success("Status updated successfully", { id: toastId });
     } catch (error) {
-      console.error('Failed to update status:', error);
+      console.error("Failed to update status:", error);
     } finally {
       setStatusUpdating(null);
     }
@@ -210,7 +222,7 @@ export default function EmployeesPage() {
       setDeleteLoading(true);
       const id = deleteId;
       const response = await fetch(`/api/admin/employees/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (response.ok) {
@@ -219,7 +231,7 @@ export default function EmployeesPage() {
         setDeleteId(null);
       }
     } catch (error) {
-      console.error('Failed to delete:', error);
+      console.error("Failed to delete:", error);
     } finally {
       setDeleteLoading(false);
     }
@@ -229,19 +241,19 @@ export default function EmployeesPage() {
     try {
       setExportLoading(true);
 
-      const response = await fetch('/api/admin/employees/csv');
+      const response = await fetch("/api/admin/employees/csv");
       const blob = await response.blob();
-      
+
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = `employees_${new Date().toISOString().split('T')[0]}.csv`;
+      a.download = `employees_${new Date().toISOString().split("T")[0]}.csv`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (error) {
-      console.error('Failed to export:', error);
+      console.error("Failed to export:", error);
     } finally {
       setExportLoading(false);
     }
@@ -252,7 +264,7 @@ export default function EmployeesPage() {
   };
 
   const getStatusBadge = (status: string) => {
-    return status === 'ACTIVE' ? (
+    return status === "ACTIVE" ? (
       <Badge className="bg-green-100 text-green-800">Active</Badge>
     ) : (
       <Badge className="bg-red-100 text-red-800">Inactive</Badge>
@@ -261,8 +273,10 @@ export default function EmployeesPage() {
 
   const stats = {
     total: pagination?.totalEmployees,
-    active: employees.filter(e => e.status === 'ACTIVE').length,
-    inactive: employees.filter(e => e.status === 'INACTIVE' || e.status === 'PENDING').length,
+    active: employees.filter((e) => e.status === "ACTIVE").length,
+    inactive: employees.filter(
+      (e) => e.status === "INACTIVE" || e.status === "PENDING"
+    ).length,
   };
 
   if (loading && currentPage === 1) {
@@ -277,7 +291,7 @@ export default function EmployeesPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4 md:p-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -286,43 +300,18 @@ export default function EmployeesPage() {
             Manage your organization's employees
           </p>
         </div>
-        
-        {/* <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={handleRefresh}
-            disabled={refreshing}
-          >
-            <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
-          <Button
-            variant="outline"
-            onClick={handleExportCSV}
-            disabled={exportLoading}
-          >
-            {exportLoading ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            ) : (
-              <Download className="h-4 w-4 mr-2" />
-            )}
-            Export CSV
-          </Button>
-          <Button onClick={() => router.push('/dashboard/admin/users/new')}>
-            <Users className="h-4 w-4 mr-2" />
-            Add Employee
-          </Button>
-        </div> */}
 
-<div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button
             variant="outline"
             size="sm"
             onClick={handleRefresh}
             disabled={refreshing}
-            className="flex-1 sm:flex-none"
+            className="flex-1 sm:flex-none hover:cursor-pointer"
           >
-            <RefreshCw className={`h-4 w-4 sm:mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw
+              className={`h-4 w-4 sm:mr-2 ${refreshing ? "animate-spin" : ""}`}
+            />
             <span className="hidden sm:inline">Refresh</span>
             <span className="sm:hidden">Reload</span>
           </Button>
@@ -331,7 +320,7 @@ export default function EmployeesPage() {
             size="sm"
             onClick={handleExportCSV}
             disabled={exportLoading}
-            className="flex-1 sm:flex-none"
+            className="flex-1 sm:flex-none hover:cursor-pointer"
           >
             {exportLoading ? (
               <Loader2 className="h-4 w-4 sm:mr-2 animate-spin" />
@@ -339,19 +328,18 @@ export default function EmployeesPage() {
               <Download className="h-4 w-4 sm:mr-2" />
             )}
             <span className="hidden sm:inline">Export CSV</span>
-             <span className="sm:hidden">Export</span>
+            <span className="sm:hidden">Export</span>
           </Button>
-          <Button 
-            size="sm" 
-            onClick={() => router.push('/dashboard/admin/employees/new')}
-            className="flex-1 sm:flex-none"
+          <Button
+            size="sm"
+            onClick={() => router.push("/dashboard/admin/employees/new")}
+            className="flex-1 sm:flex-none hover:cursor-pointer"
           >
             <UserPlus className="h-4 w-4 sm:mr-2" />
             <span className="hidden sm:inline">Add Employee</span>
             <span className="sm:hidden">Add</span>
           </Button>
         </div>
-
       </div>
 
       {/* Stats Cards */}
@@ -373,7 +361,9 @@ export default function EmployeesPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.active}</div>
+            <div className="text-2xl font-bold text-green-600">
+              {stats.active}
+            </div>
           </CardContent>
         </Card>
         <Card>
@@ -383,7 +373,9 @@ export default function EmployeesPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.inactive}</div>
+            <div className="text-2xl font-bold text-red-600">
+              {stats.inactive}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -414,7 +406,7 @@ export default function EmployeesPage() {
                 <TableHead>Designation</TableHead>
                 <TableHead>Department</TableHead>
                 <TableHead>Joining Date</TableHead>
-                <TableHead className="text-right">Salary</TableHead>
+                <TableHead>Basic Pay</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -425,7 +417,9 @@ export default function EmployeesPage() {
                   <TableCell colSpan={8} className="text-center py-8">
                     <Users className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
                     <p className="text-muted-foreground">
-                      {searchTerm ? 'No employees match your search' : 'No employees found'}
+                      {searchTerm
+                        ? "No employees match your search"
+                        : "No employees found"}
                     </p>
                   </TableCell>
                 </TableRow>
@@ -435,32 +429,39 @@ export default function EmployeesPage() {
                     <TableCell>
                       <div>
                         <p className="font-medium">{employee.name}</p>
-                        <p className="text-sm text-muted-foreground">{employee.email}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {employee.email}
+                        </p>
                       </div>
                     </TableCell>
                     <TableCell>
                       <code className="text-sm">{employee.employeeId}</code>
                     </TableCell>
-                    <TableCell>{employee.designation}</TableCell>
-                    <TableCell>{employee.department}</TableCell>
+                    <TableCell>{employee.job?.designation}</TableCell>
+                    <TableCell>{employee.job?.department}</TableCell>
                     <TableCell>
-                      {new Date(employee.joiningDate).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })}
+                      {new Date(employee.job?.joinDate).toLocaleDateString(
+                        "en-US",
+                        {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        }
+                      )}
                     </TableCell>
-                    <TableCell className="text-right font-semibold">
-                      {/* ₹{employee.salary.toLocaleString('en-IN')} */}
-                      ₹{employee?.salary ? employee.salary.toLocaleString('en-IN') : '0'}
-
+                    <TableCell className="font-semibold">
+                      {/* ₹{employee.salary.toLocaleString('en-IN')} */}₹
+                      {employee.salary?.basic.toLocaleString("en-IN")}
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 hover:cursor-pointer">
                         {getStatusBadge(employee.status)}
                         <Switch
-                          checked={employee.status === 'ACTIVE'}
-                          onCheckedChange={() => handleStatusToggle(employee._id, employee.status)}
+                          className="hover:cursor-pointer"
+                          checked={employee.status === "ACTIVE"}
+                          onCheckedChange={() =>
+                            handleStatusToggle(employee._id, employee.status)
+                          }
                           disabled={statusUpdating === employee._id}
                         />
                       </div>
@@ -468,26 +469,43 @@ export default function EmployeesPage() {
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="hover:cursor-pointer"
+                          >
                             <MoreVertical className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem
-                            onClick={() => router.push(`/dashboard/admin/users/view/${employee._id}`)}
+                            onClick={() =>
+                              router.push(
+                                `/dashboard/admin/users/view/${employee._id}`
+                              )
+                            }
+                            className="hover:cursor-pointer"
                           >
                             <Eye className="h-4 w-4 mr-2" />
                             View Profile
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            onClick={() => router.push(`/dashboard/admin/users/edit/${employee._id}`)}
+                            onClick={() =>
+                              router.push(
+                                `/dashboard/admin/users/edit/${employee._id}`
+                              )
+                            }
+                            className="hover:cursor-pointer"
                           >
                             <Edit className="h-4 w-4 mr-2" />
                             Edit
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
-                            onClick={() => handleGenerateSalarySlip(employee._id)}
+                            onClick={() =>
+                              handleGenerateSalarySlip(employee._id)
+                            }
+                            className="hover:cursor-pointer"
                           >
                             <FileText className="h-4 w-4 mr-2" />
                             Generate Salary Slip
@@ -495,7 +513,7 @@ export default function EmployeesPage() {
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
                             onClick={() => setDeleteId(employee._id)}
-                            className="text-red-600"
+                            className="text-red-600 hover:cursor-pointer"
                           >
                             <Trash2 className="h-4 w-4 mr-2" />
                             Delete
@@ -513,22 +531,30 @@ export default function EmployeesPage() {
           {!searchTerm && pagination?.totalPages > 1 && (
             <div className="flex items-center justify-between px-6 py-4 border-t">
               <div className="text-sm text-muted-foreground">
-                Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{' '}
-                {Math.min(currentPage * ITEMS_PER_PAGE, pagination.totalEmployees)} of{' '}
-                {pagination.totalEmployees} employees
+                Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{" "}
+                {Math.min(
+                  currentPage * ITEMS_PER_PAGE,
+                  pagination.totalEmployees
+                )}{" "}
+                of {pagination.totalEmployees} employees
               </div>
               <div className="flex gap-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(1, prev - 1))
+                  }
                   disabled={currentPage === 1 || loading}
                 >
                   <ChevronLeft className="h-4 w-4 mr-1" />
                   Previous
                 </Button>
                 <div className="flex items-center gap-1">
-                  {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
+                  {Array.from(
+                    { length: pagination.totalPages },
+                    (_, i) => i + 1
+                  )
                     .filter(
                       (page) =>
                         page === 1 ||
@@ -541,7 +567,7 @@ export default function EmployeesPage() {
                           <span className="px-2">...</span>
                         )}
                         <Button
-                          variant={currentPage === page ? 'default' : 'outline'}
+                          variant={currentPage === page ? "default" : "outline"}
                           size="sm"
                           onClick={() => setCurrentPage(page)}
                           disabled={loading}
@@ -554,7 +580,11 @@ export default function EmployeesPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setCurrentPage((prev) => Math.min(pagination.totalPages, prev + 1))}
+                  onClick={() =>
+                    setCurrentPage((prev) =>
+                      Math.min(pagination.totalPages, prev + 1)
+                    )
+                  }
                   disabled={currentPage === pagination.totalPages || loading}
                 >
                   Next
@@ -572,15 +602,18 @@ export default function EmployeesPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the employee and all associated data.
+              This action cannot be undone. This will permanently delete the
+              employee and all associated data.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleteLoading}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleteLoading}>
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
               disabled={deleteLoading}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-red-600 hover:bg-red-700 hover:cursor-pointer"
             >
               {deleteLoading ? (
                 <>
@@ -588,7 +621,7 @@ export default function EmployeesPage() {
                   Deleting...
                 </>
               ) : (
-                'Delete'
+                "Delete"
               )}
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -597,27 +630,6 @@ export default function EmployeesPage() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // ui enhanced ==============
 // "use client";
@@ -744,7 +756,7 @@ export default function EmployeesPage() {
 //       // Fetch from API
 //       console.log('🌐 Fetching employees from API');
 //       const response = await fetch(`/api/admin/employees?page=${currentPage}&limit=${ITEMS_PER_PAGE}`);
-      
+
 //       if (response.ok) {
 //         const data = await response.json();
 //         setEmployees(data.employees);
@@ -852,7 +864,7 @@ export default function EmployeesPage() {
 
 //       const response = await fetch('/api/admin/employees/export');
 //       const blob = await response.blob();
-      
+
 //       const url = window.URL.createObjectURL(blob);
 //       const a = document.createElement('a');
 //       a.href = url;
@@ -907,7 +919,7 @@ export default function EmployeesPage() {
 //             Manage your organization's employees
 //           </p>
 //         </div>
-        
+
 //         {/* Action Buttons - Mobile Optimized */}
 //         <div className="flex flex-wrap gap-2">
 //           <Button
@@ -934,8 +946,8 @@ export default function EmployeesPage() {
 //             )}
 //             <span className="hidden sm:inline">Export CSV</span>
 //           </Button>
-//           <Button 
-//             size="sm" 
+//           <Button
+//             size="sm"
 //             onClick={() => router.push('/dashboard/admin/users/new')}
 //             className="flex-1 sm:flex-none"
 //           >
@@ -1231,7 +1243,7 @@ export default function EmployeesPage() {
 //                   <ChevronLeft className="h-4 w-4" />
 //                   <span className="hidden sm:inline ml-1">Previous</span>
 //                 </Button>
-                
+
 //                 {/* Page Numbers - Simplified for mobile */}
 //                 <div className="flex items-center gap-1">
 //                   {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)

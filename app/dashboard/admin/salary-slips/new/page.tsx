@@ -450,6 +450,35 @@ export default function GenerateSalarySlipPage() {
                   />
                 </div>
 
+                  
+                                      <div className="space-y-2">
+                                        <Label htmlFor="bonusTitle">Bonus (if any)</Label>
+                                        <Input
+                                          id="bonusTitle"
+                                          name="bonusTitle"
+                                          type="text"
+                                          placeholder="Title"
+                                          value={formData.bonusTitle}
+                                          onChange={handleChange}
+                                          disabled={loading}
+                                        />
+                                      </div>
+
+                                      <div className="space-y-2">
+                      <Label htmlFor="bonusAmount">Bonus Amount</Label>
+                      <Input
+                        id="bonusAmount"
+                        name="bonusAmount"
+                        type="number"
+                        placeholder="1500"
+                        value={formData.bonusAmount}
+                        onChange={handleChange}
+                        disabled={loading}
+                        min="0"
+                        step="0.01"
+                      />
+                    </div>    
+
                 <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="otherAllowances">Other Allowances</Label>
                   <Input
@@ -507,6 +536,16 @@ export default function GenerateSalarySlipPage() {
                     onChange={handleInputChange}
                   />
                 </div>
+
+
+
+
+
+
+
+
+
+
               </div>
             </CardContent>
           </Card>

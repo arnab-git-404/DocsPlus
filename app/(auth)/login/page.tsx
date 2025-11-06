@@ -86,7 +86,6 @@ const LoginPage = () => {
       toast.error(err.message || "Login failed!", { id: toastId });
     } finally {
       setLoading(false);
-      toast.dismiss(toastId);
     }
   };
 
