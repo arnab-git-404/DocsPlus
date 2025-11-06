@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface ISalarySlip extends Document {
   employee: {
@@ -32,7 +32,14 @@ export interface ISalarySlip extends Document {
     deductions: {
       pf: number;
       tax: number;
-      other: number;
+      other: {
+        title: string;
+        amount: number;
+      };  
+    };
+    bonus: {
+      title: string;
+      amount: number;
     };
     grossSalary: number;
     netSalary: number;
@@ -41,7 +48,7 @@ export interface ISalarySlip extends Document {
   watermark: boolean;
   generatedBy: mongoose.Types.ObjectId;
   sentAt: Date;
-  status: 'DRAFT' | 'GENERATED' | 'SENT';
+  status: "DRAFT" | "GENERATED" | "SENT";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -51,7 +58,7 @@ const SalarySlipSchema = new Schema<ISalarySlip>(
     employee: {
       userId: {
         type: Schema.Types.ObjectId,
-        ref: 'User',
+        ref: "User",
         required: true,
       },
       name: {
@@ -94,7 +101,7 @@ const SalarySlipSchema = new Schema<ISalarySlip>(
         type: Number,
         required: true,
       },
-      basicSalary: {
+      basic: {
         type: Number,
         required: true,
       },
@@ -107,7 +114,28 @@ const SalarySlipSchema = new Schema<ISalarySlip>(
       deductions: {
         pf: { type: Number, default: 0 },
         tax: { type: Number, default: 0 },
-        other: { type: Number, default: 0 },
+                others: {
+          title: {
+            type: String,
+            trim: true,
+            default: "",
+          },
+          amount: {
+            type: Number,
+            default: 0,
+          },
+        },
+      },
+      bonus: {
+        title:{
+          type: String,
+          trim: true,
+          default: "",
+        },
+        amount: {
+          type: Number,
+          default: 0,
+        }
       },
       grossSalary: {
         type: Number,
@@ -125,16 +153,16 @@ const SalarySlipSchema = new Schema<ISalarySlip>(
     },
     generatedBy: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
     },
-    sentAt:{
+    sentAt: {
       type: Date,
     },
     status: {
       type: String,
-      enum: ['DRAFT', 'GENERATED', 'SENT'],
-      default: 'DRAFT',
+      enum: ["DRAFT", "GENERATED", "SENT"],
+      default: "DRAFT",
     },
   },
   {
@@ -142,4 +170,5 @@ const SalarySlipSchema = new Schema<ISalarySlip>(
   }
 );
 
-export default mongoose.models.SalarySlip || mongoose.model<ISalarySlip>('SalarySlip', SalarySlipSchema);
+export default mongoose.models.SalarySlip ||
+  mongoose.model<ISalarySlip>("SalarySlip", SalarySlipSchema);

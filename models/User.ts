@@ -250,7 +250,7 @@ const EmployeeSchema = new Schema<IEmployee>(
       net: {
           type: Number,
           default: 0,
-        },
+      },
     },
     bank: {
       name: {

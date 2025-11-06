@@ -3,24 +3,11 @@ import { cookies } from 'next/headers';
 import { verify } from 'jsonwebtoken';
 import dbConnect from '@/lib/db';
 import User from '@/models/User';
+import SalarySlip from '@/models/SalarySlip';
 
 export async function GET(request: NextRequest) {
   try {
     await dbConnect();
-
-    // Get token from cookies
-    // const cookieStore = cookies();
-    // const token = cookieStore.get('token')?.value;
-
-    // if (!token) {
-    //   return NextResponse.json(
-    //     { error: 'Unauthorized' },
-    //     { status: 401 }
-    //   );
-    // }
-
-    // Verify token
-    // const decoded = verify(token, process.env.JWT_SECRET!) as { userId: string };
 
     const userId = request.headers.get('x-user-id');
 
@@ -35,8 +22,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch salary slips (you'll need to create a SalarySlip model)
-    // For now, returning empty array
-    const salarySlips: any[] = [];
+    const salarySlips = await SalarySlip.find({ 'employee.userId': userId })
+    .sort({ 'salary.year': -1, 'salary.month': -1 });
+
+    console.log('Employee salary fetched successfully' , salarySlips);
 
     return NextResponse.json({
       employee,

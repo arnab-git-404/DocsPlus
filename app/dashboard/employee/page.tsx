@@ -274,23 +274,14 @@ export default function EmployeeDashboardPage() {
   const { user } = useAuth();
   const router = useRouter();
   
-  const [employeeData, setEmployeeData] = useState<EmployeeData | null>(null);
-  const [salarySlips, setSalarySlips] = useState<SalarySlip[]>([]);
+  // const [employeeData, setEmployeeData] = useState<EmployeeData as any>(null);
+  const [employeeData, setEmployeeData] = useState<any>(null);
+  const [salarySlips, setSalarySlips] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
 
   useEffect(() => {
-    if (!user) {
-      router.push('/login');
-      return;
-    }
-
-    if (user.role === 'ADMIN') {
-      router.push('/dashboard/admin');
-      return;
-    }
-
     fetchEmployeeData();
   }, [user, router]);
 
@@ -299,15 +290,15 @@ export default function EmployeeDashboardPage() {
       setLoading(true);
       setError('');
 
-      // Check localStorage first (valid for 1 day)
+      // Check localStorage first (valid for 8 hours)
       const cachedData = localStorage.getItem('employeeData');
       const cacheTimestamp = localStorage.getItem('employeeDataTimestamp');
       
       if (cachedData && cacheTimestamp) {
         const timestamp = parseInt(cacheTimestamp);
-        const oneDayInMs = 24 * 60 * 60 * 1000;
-        
-        if (Date.now() - timestamp < oneDayInMs) {
+        const eightHoursInMs = 8 * 60 * 60 * 1000;
+
+        if (Date.now() - timestamp < eightHoursInMs) {
           const parsed = JSON.parse(cachedData);
           setEmployeeData(parsed.employee);
           setSalarySlips(parsed.salarySlips || []);
@@ -330,7 +321,8 @@ export default function EmployeeDashboardPage() {
       localStorage.setItem('employeeDataTimestamp', Date.now().toString());
       
       setEmployeeData(data.employee);
-      setSalarySlips(data.salarySlips || []);
+      setSalarySlips(data.salarySlips);
+      console.log(data.salarySlips);
     } catch (err: any) {
       setError(err.message || 'Failed to load employee data');
     } finally {
@@ -357,9 +349,10 @@ export default function EmployeeDashboardPage() {
   const downloadSalarySlip = async (slipId: string, month: string, year: number) => {
     try {
       const response = await fetch(`/api/employee/salary-slips/${slipId}/download`);
-      
+      // have to update this api after lunch 
+
       if (!response.ok) {
-        throw new Error('Failed to download salary slip');
+        throw Error('Failed to download salary slip');
       }
 
       const blob = await response.blob();
@@ -397,18 +390,18 @@ export default function EmployeeDashboardPage() {
     return null;
   }
 
-  const currentMonthSlip = salarySlips[0];
+  const currentMonthSlip = salarySlips[0]
   const lastPayment = getLastPayment();
   const ytdEarnings = calculateYTDEarnings();
 
   const stats = [
     {
-      title: 'Current Month Salary',
-      value: currentMonthSlip 
-        ? `₹${currentMonthSlip.netSalary.toLocaleString('en-IN')}` 
-        : '₹0.00',
+      title: `${currentMonthSlip.salary.month} Month Salary`,
+      value: currentMonthSlip
+        ? `₹${currentMonthSlip.salary.netSalary?.toLocaleString('en-IN')}` 
+        : '₹0.001',
       description: currentMonthSlip 
-        ? `${currentMonthSlip.month} ${currentMonthSlip.year}` 
+        ? `${currentMonthSlip.salary.month} ${currentMonthSlip.salary.year}` 
         : 'Salary slip not generated yet',
       icon: DollarSign,
       color: 'text-green-600',
@@ -432,7 +425,7 @@ export default function EmployeeDashboardPage() {
     },
     {
       title: 'Last Payment',
-      value: lastPayment ? `₹${lastPayment.amount.toLocaleString('en-IN')}` : 'N/A',
+      value: lastPayment ? `₹${lastPayment.amount?.toLocaleString('en-IN')}` : 'N/A',
       description: lastPayment ? lastPayment.date : 'No payment history',
       icon: Calendar,
       color: 'text-orange-600',
@@ -490,55 +483,64 @@ export default function EmployeeDashboardPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <DollarSign className="h-5 w-5" />
-                    Current Month Breakdown
+                    {currentMonthSlip.salary.month} Month Breakdown
                   </CardTitle>
                   <CardDescription>
-                    {currentMonthSlip.month} {currentMonthSlip.year}
+                    {currentMonthSlip.salary.month} {currentMonthSlip.salary.year}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <div className="flex justify-between">
+                  <div className="flex justify-between text-green-600 dark:text-green-400 ">
                     <span className="text-sm text-muted-foreground">Basic Salary</span>
                     <span className="font-medium">
-                      ₹{employeeData.salary.basic.toLocaleString('en-IN')}
+                      ₹{currentMonthSlip.salary.basicSalary?.toLocaleString('en-IN')}
                     </span>
                   </div>
-                  {employeeData.salary.hra && (
-                    <div className="flex justify-between">
+                  {currentMonthSlip.salary.allowances.hra && (
+                    <div className="flex justify-between text-green-600 dark:text-green-400 ">
                       <span className="text-sm text-muted-foreground">HRA</span>
                       <span className="font-medium">
-                        ₹{employeeData.salary.hra.toLocaleString('en-IN')}
+                        ₹{currentMonthSlip.salary.allowances.hra?.toLocaleString('en-IN')}
                       </span>
                     </div>
                   )}
-                  {employeeData.salary.transportAllowances && (
-                    <div className="flex justify-between">
+                  {currentMonthSlip.salary.allowances.transport && (
+                    <div className="flex justify-between text-green-600 dark:text-green-400">
                       <span className="text-sm text-muted-foreground">Transport</span>
                       <span className="font-medium">
-                        ₹{employeeData.salary.transportAllowances.toLocaleString('en-IN')}
+                        ₹{currentMonthSlip.salary.allowances.transport?.toLocaleString('en-IN')}
                       </span>
                     </div>
                   )}
-                  {employeeData.salary.deductions?.pf && (
+                  {currentMonthSlip.salary.deductions.pf && (
                     <div className="flex justify-between text-red-600 dark:text-red-400">
                       <span className="text-sm">PF Deduction</span>
                       <span className="font-medium">
-                        -₹{employeeData.salary.deductions.pf.toLocaleString('en-IN')}
+                        -₹{currentMonthSlip.salary.deductions.pf.toLocaleString('en-IN') || '69'}
                       </span>
                     </div>
                   )}
-                  {employeeData.salary.deductions?.tax && (
+                  {currentMonthSlip.salary.deductions?.tax && (
                     <div className="flex justify-between text-red-600 dark:text-red-400">
                       <span className="text-sm">Tax Deduction</span>
                       <span className="font-medium">
-                        -₹{employeeData.salary.deductions.tax.toLocaleString('en-IN')}
+                        -₹{currentMonthSlip.salary.deductions.tax.toLocaleString('en-IN')}
                       </span>
                     </div>
                   )}
+                  {currentMonthSlip.salary.deductions?.other && (
+                    <div className="flex justify-between text-red-600 dark:text-red-400">
+                      <span className="text-sm">Other Deductions</span>
+                      <span className="font-medium">
+                        -₹{currentMonthSlip.salary.deductions.other.toLocaleString('en-IN')}
+                      </span>
+                    </div>
+                  )}
+
                   <div className="pt-3 border-t flex justify-between">
                     <span className="font-semibold">Net Salary</span>
                     <span className="font-bold text-lg text-green-600 dark:text-green-400">
-                      ₹{currentMonthSlip.netSalary.toLocaleString('en-IN')}
+                      ₹{currentMonthSlip.salary.netSalary?.toLocaleString('en-IN')}
                     </span>
                   </div>
                   <Button 
@@ -578,10 +580,10 @@ export default function EmployeeDashboardPage() {
                           <FileText className="h-4 w-4 text-muted-foreground" />
                           <div>
                             <p className="text-sm font-medium">
-                              {slip.month} {slip.year}
+                              {slip.salary.month} {slip.salary.year}
                             </p>
                             <p className="text-xs text-muted-foreground">
-                              ₹{slip.netSalary.toLocaleString('en-IN')}
+                              ₹{slip.salary.netSalary?.toLocaleString('en-IN')}
                             </p>
                           </div>
                         </div>
@@ -632,11 +634,11 @@ export default function EmployeeDashboardPage() {
                         </div>
                         <div>
                           <p className="font-medium">
-                            {slip.month} {slip.year}
+                            {slip.salary.month} {slip.salary.year}
                           </p>
                           <p className="text-sm text-muted-foreground">
                             Generated on{' '}
-                            {new Date(slip.generatedAt).toLocaleDateString('en-IN')}
+                            {new Date(slip.createdAt).toLocaleDateString('en-IN')}
                           </p>
                         </div>
                       </div>
@@ -644,12 +646,12 @@ export default function EmployeeDashboardPage() {
                         <div className="text-right">
                           <p className="text-sm text-muted-foreground">Net Salary</p>
                           <p className="font-bold text-lg">
-                            ₹{slip.netSalary.toLocaleString('en-IN')}
+                            ₹{slip.salary.netSalary?.toLocaleString('en-IN') || 'N/A'}
                           </p>
                         </div>
                         <Button
                           size="sm"
-                          onClick={() => downloadSalarySlip(slip._id, slip.month, slip.year)}
+                          onClick={() => downloadSalarySlip(slip._id, slip.salary.month, slip.salary.year)}
                         >
                           <Download className="mr-2 h-4 w-4" />
                           Download
@@ -723,21 +725,21 @@ export default function EmployeeDashboardPage() {
                     <label className="text-sm font-medium text-muted-foreground">
                       Email
                     </label>
-                    <p className="font-medium break-all">{employeeData.contact.email}</p>
+                    <p className="font-medium break-all">{employeeData.contact?.email}</p>
                   </div>
                 </div>
-                {employeeData.contact.phone && (
+                {employeeData.contact?.phone && (
                   <div className="flex items-start gap-2">
                     <Phone className="h-4 w-4 mt-1 text-muted-foreground" />
                     <div>
                       <label className="text-sm font-medium text-muted-foreground">
                         Phone
                       </label>
-                      <p className="font-medium">{employeeData.contact.phone}</p>
+                      <p className="font-medium">{employeeData.contact?.phone}</p>
                     </div>
                   </div>
                 )}
-                {employeeData.contact.address && (
+                {employeeData.contact?.address && (
                   <div className="flex items-start gap-2">
                     <MapPin className="h-4 w-4 mt-1 text-muted-foreground" />
                     <div>
