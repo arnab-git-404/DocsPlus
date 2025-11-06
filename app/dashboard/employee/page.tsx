@@ -396,10 +396,10 @@ export default function EmployeeDashboardPage() {
 
   const stats = [
     {
-      title: `${currentMonthSlip.salary.month} Month Salary`,
+      title: `${currentMonthSlip?.salary.month || 'Last' } Month Salary`,
       value: currentMonthSlip
         ? `₹${currentMonthSlip.salary.netSalary?.toLocaleString('en-IN')}` 
-        : '₹0.001',
+        : '₹0.00',
       description: currentMonthSlip 
         ? `${currentMonthSlip.salary.month} ${currentMonthSlip.salary.year}` 
         : 'Salary slip not generated yet',
