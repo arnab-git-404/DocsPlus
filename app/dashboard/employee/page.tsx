@@ -192,6 +192,7 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { toast } from 'react-hot-toast';
 import { 
   FileText, 
   Download, 
@@ -347,6 +348,9 @@ export default function EmployeeDashboardPage() {
   };
 
   const downloadSalarySlip = async (slipId: string, month: string, year: number) => {
+
+      const toastId = toast.loading("Downloading salary slip...");
+
     try {
       const response = await fetch(`/api/employee/download/${slipId}`);
       // have to update this api after lunch 
@@ -364,8 +368,12 @@ export default function EmployeeDashboardPage() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
+          toast.success(`Salary slip for ${month} ${year} downloaded!`, { id: toastId });
+
     } catch (err) {
       console.error('Download error:', err);
+          toast.error("Failed to download salary slip!", { id: toastId });
+
     }
   };
 
@@ -467,11 +475,11 @@ export default function EmployeeDashboardPage() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid h-24 md:h-10 w-full grid-cols-2 lg:grid-cols-4">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="salary-slips">Salary Slips</TabsTrigger>
-          <TabsTrigger value="profile">Profile</TabsTrigger>
-          <TabsTrigger value="documents">Documents</TabsTrigger>
+        <TabsList className="grid h-24 md:h-10 w-full grid-cols-2 lg:grid-cols-4  ">
+          <TabsTrigger className='hover:cursor-pointer' value="overview">Overview</TabsTrigger>
+          <TabsTrigger className='hover:cursor-pointer' value="salary-slips">Salary Slips</TabsTrigger>
+          <TabsTrigger className='hover:cursor-pointer' value="profile">Profile</TabsTrigger>
+          <TabsTrigger className='hover:cursor-pointer' value="documents">Documents</TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}
@@ -544,7 +552,7 @@ export default function EmployeeDashboardPage() {
                     </span>
                   </div>
                   <Button 
-                    className="w-full mt-4" 
+                    className="w-full mt-4 hover:cursor-pointer " 
                     onClick={() => downloadSalarySlip(
                       currentMonthSlip._id, 
                       currentMonthSlip.salary.month, 
@@ -592,6 +600,7 @@ export default function EmployeeDashboardPage() {
                         </div>
                         <Button
                           size="sm"
+                          className='hover:cursor-pointer'
                           variant="ghost"
                           onClick={() => downloadSalarySlip(
                             slip._id, 
@@ -658,6 +667,7 @@ export default function EmployeeDashboardPage() {
                         </div>
                         <Button
                           size="sm"
+                          className='hover:cursor-pointer'
                           onClick={() => downloadSalarySlip(
                             slip._id, 
                             slip.salary.month, 

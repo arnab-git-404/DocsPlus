@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import toast from 'react-hot-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   User, 
@@ -102,14 +103,26 @@ export default function ProfilePage() {
   };
 
   const handleSaveProfile = async () => {
+
+    const toastId = toast.loading("Updating profile...");
+
     try {
       setLoading(true);
       setMessage(null);
 
-      const response = await fetch('/api/auth/profile', {
+      const response = await fetch('/api/employee/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(profile),
+        body: JSON.stringify({
+          name: profile.name,
+          email: profile.email,
+          phone: profile.phone,
+          department: profile.department,
+          address: profile.address,
+          city: profile.city,
+          state: profile.state,
+          pincode: profile.pincode,
+        }),
       });
 
       const data = await response.json();
@@ -121,8 +134,11 @@ export default function ProfilePage() {
       } else {
         setMessage({ type: 'error', text: data.error || 'Failed to update profile' });
       }
+          toast.success("Profile updated successfully!", { id: toastId });
     } catch (error) {
       setMessage({ type: 'error', text: 'An error occurred' });
+
+          toast.error("Failed to update profile!", { id: toastId });
     } finally {
       setLoading(false);
     }
@@ -170,6 +186,8 @@ export default function ProfilePage() {
 //   };
 
 const handleRequestPasswordReset = async () => {
+    const toastId = toast.loading("Sending password reset link...");
+
   try {
     setLoading(true);
     setMessage(null);
@@ -188,8 +206,12 @@ const handleRequestPasswordReset = async () => {
     } else {
       setMessage({ type: 'error', text: data.error || 'Failed to send reset link' });
     }
+        toast.success(`Password reset link sent to your email. Please check your inbox OR Spam.`, { id: toastId });
+
   } catch (error) {
     setMessage({ type: 'error', text: 'An error occurred' });
+        toast.error("Failed to send password reset link!", { id: toastId });
+
   } finally {
     setLoading(false);
   }
@@ -245,6 +267,7 @@ const handleRequestPasswordReset = async () => {
           {!isEditing && (
             <Button 
               onClick={() => setIsEditing(true)} 
+              className='hover:cursor-pointer'
             >
               <Edit2 className="h-4 w-4 mr-2" />
               Edit Profile
@@ -269,12 +292,12 @@ const handleRequestPasswordReset = async () => {
         {/* Tabs Section */}
         <Tabs defaultValue="personal" className="w-full">
           <TabsList className="grid w-full grid-cols-2 lg:grid-cols-3">
-            <TabsTrigger value="personal" className="flex items-center gap-2">
+            <TabsTrigger value="personal" className="flex items-center gap-2 hover:cursor-pointer ">
               <User className="h-4 w-4" />
               <span className="hidden sm:inline">Personal Info</span>
               <span className="sm:hidden">Personal</span>
             </TabsTrigger>
-            <TabsTrigger value="security" className="flex items-center gap-2">
+            <TabsTrigger value="security" className="flex items-center gap-2 hover:cursor-pointer">
               <Lock className="h-4 w-4" />
               <span className="hidden sm:inline">Security</span>
               <span className="sm:hidden">Security</span>
@@ -542,7 +565,7 @@ const handleRequestPasswordReset = async () => {
               onClick={handleRequestPasswordReset}
               disabled={loading}
               variant="outline"
-              className="w-full sm:w-auto"
+              className="w-full sm:w-auto hover:cursor-pointer"
             >
               <Lock className="h-4 w-4 mr-2" />
               {loading ? 'Sending Link...' : 'Send Reset Link'}

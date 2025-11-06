@@ -313,7 +313,7 @@ const Navbar = () => {
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground overflow-hidden">
                 <img src="/logo.jpeg" alt="Logo" className="h-10 w-10 object-cover" />
               </div>
-              <span className="text-xl font-bold hidden sm:inline-block">Hackence</span>
+              <span className="text-2xl font-bold hidden sm:inline-block">Hackence</span>
             </Link>
           </div>
 
@@ -339,7 +339,7 @@ const Navbar = () => {
               variant="ghost"
               size="icon"
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="h-9 w-9"
+              className="h-9 w-9 hover:cursor-pointer "
             >
               <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
               <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
@@ -351,7 +351,7 @@ const Navbar = () => {
               <div className="hidden md:block">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                    <Button variant="ghost" className="relative h-9 w-9 rounded-full hover:cursor-pointer">
                       <Avatar className="h-9 w-9">
                         <AvatarImage src="" alt={user.name} />
                         <AvatarFallback>{getInitials(user.name)}</AvatarFallback>

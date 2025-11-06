@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Inter } from "next/font/google";
 import { AuthProvider } from '@/contexts/AuthContext';
+import { Toaster } from 'react-hot-toast';
 
 
 const geistSans = Geist({
@@ -37,6 +38,8 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         ><AuthProvider>
+          <Toaster />
+
           {children}
         </AuthProvider>
       </ThemeProvider>

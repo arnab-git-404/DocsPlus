@@ -24,6 +24,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, AlertCircle, CheckCircle2 , Eye, EyeOff} from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 const LoginPage = () => {
   const router = useRouter();
@@ -51,6 +52,9 @@ const LoginPage = () => {
     setError('');
     setLoading(true);
 
+      const toastId = toast.loading("Logging in...");
+
+
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
@@ -75,10 +79,14 @@ const LoginPage = () => {
       }
       
       router.refresh();
+          toast.success(`Logged in successfully!`, { id: toastId });
+
     } catch (err: any) {
       setError(err.message);
+      toast.error(err.message || "Login failed!", { id: toastId });
     } finally {
       setLoading(false);
+      toast.dismiss(toastId);
     }
   };
 
