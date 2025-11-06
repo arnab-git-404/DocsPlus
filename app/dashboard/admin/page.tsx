@@ -143,11 +143,11 @@ export default  function AdminDashboardPage() {
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Link
-              href="/dashboard/admin/users/new"
+              href="/dashboard/admin/employees/new"
               className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-lg hover:border-primary transition-colors cursor-pointer group"
             >
               <Users className="h-8 w-8 mb-2 text-muted-foreground group-hover:text-primary" />
-              <span className="text-sm font-medium">Add New User</span>
+              <span className="text-sm font-medium">Add New Employee</span>
             </Link>
             <Link
               href="/dashboard/admin/salary-slips/new"

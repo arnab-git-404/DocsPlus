@@ -85,7 +85,7 @@ export default function InvoicePage() {
             Create and manage client invoices
           </p>
         </div>
-        <Button onClick={() => router.push('/dashboard/invoices/new')}>
+        <Button onClick={() => router.push('/dashboard/admin/invoices/new')}>
           <Plus className="h-4 w-4 mr-2" />
           New Invoice
         </Button>
