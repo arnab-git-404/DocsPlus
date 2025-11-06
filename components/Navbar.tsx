@@ -286,7 +286,7 @@ const Navbar = () => {
 
   const adminNavItems = [
     { href: '/dashboard/admin', label: 'Dashboard', icon: Home },
-    { href: '/dashboard/admin/users', label: 'Employees', icon: UsersIcon },
+    { href: '/dashboard/admin/employees', label: 'Employees', icon: UsersIcon },
     { href: '/dashboard/admin/salary-slips', label: 'Salary Slips', icon: FileText },
     { href: '/dashboard/admin/invoices', label: 'Invoices', icon: Receipt },
     { href: '/dashboard/admin/offer-letters', label: 'Offer Letters', icon: Mail },
@@ -300,7 +300,7 @@ const Navbar = () => {
   const navItems = user?.role === 'ADMIN' ? adminNavItems : employeeNavItems;
 
   return (
-    <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="border-b bg-background/95 backdrop-blur ">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Left side - Logo */}

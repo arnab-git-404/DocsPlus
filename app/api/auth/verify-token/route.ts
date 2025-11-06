@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     const user = await User.findOne({
       activationToken: token,
       activationExpiry: { $gt: new Date() },
-    }).select('name email employeeId role');
+    }).select('name contact employeeId role');
 
     if (!user) {
       return NextResponse.json(
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       user: {
         name: user.name,
-        email: user.email,
+        email: user.contact.email,
         employeeId: user.employeeId,
         role: user.role,
       },

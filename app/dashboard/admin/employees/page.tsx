@@ -343,7 +343,7 @@ export default function EmployeesPage() {
           </Button>
           <Button 
             size="sm" 
-            onClick={() => router.push('/dashboard/admin/users/new')}
+            onClick={() => router.push('/dashboard/admin/employees/new')}
             className="flex-1 sm:flex-none"
           >
             <UserPlus className="h-4 w-4 sm:mr-2" />
