@@ -16,7 +16,6 @@ const PUBLIC_ROUTES = [
   "/api/auth/activate",
   "/api/auth/verify-token",
   "/api/auth/password/reset-password",
-  "/api/auth/password/request-reset-password",
   "/_next",
   "/favicon.ico",
   "/logo.jpeg",

@@ -35,12 +35,12 @@ interface UserProfile {
   city: string;
   state: string;
   pincode: string;
-  joinDate: string;
+  joinDate: Date;
   avatar?: string;
 }
 
 export default function ProfilePage() {
-  const [profile, setProfile] = useState<UserProfile>({
+  const [profile, setProfile] = useState<any>({
     name: '',
     email: '',
     phone: '',
@@ -50,7 +50,7 @@ export default function ProfilePage() {
     city: '',
     state: '',
     pincode: '',
-    joinDate: '',
+    joinDate: new Date(),
     avatar: '',
   });
 
@@ -86,7 +86,7 @@ export default function ProfilePage() {
           city: data.user.city || '',
           state: data.user.state || '',
           pincode: data.user.pincode || '',
-          joinDate: new Date(data.user.createdAt).toLocaleDateString(),
+          joinDate: data.user.joinDate,
           avatar: data.user.avatar || '',
         });
       }
@@ -232,12 +232,12 @@ const handleRequestPasswordReset = async () => {
               {profile.department && (
                 <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
                   <Briefcase className="h-4 w-4" />
-                  {profile.department}
+                  Department: {profile.department}
                 </span>
               )}
               <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
                 <Calendar className="h-4 w-4" />
-                Joined {profile.joinDate}
+                Joining Date: {new Date(profile.joinDate).toLocaleDateString('en-IN')}
               </span>
             </div>
           </div>
@@ -413,7 +413,7 @@ const handleRequestPasswordReset = async () => {
                     <Input
                       id="pincode"
                       name="pincode"
-                      value={profile.pincode}
+                      value={profile.pincode || ''}
                       onChange={handleInputChange}
                       disabled={!isEditing}
                       className="disabled:bg-gray-50"

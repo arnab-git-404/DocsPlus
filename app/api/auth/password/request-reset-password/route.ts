@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
     const userId = request.headers.get("x-user-id");
 
     if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorizedd" }, { status: 401 });
     }
 
     await dbConnect();

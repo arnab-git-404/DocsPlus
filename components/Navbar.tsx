@@ -295,7 +295,7 @@ const Navbar = () => {
 
   const employeeNavItems = [
     { href: '/dashboard/employee', label: 'Dashboard', icon: Home },
-    { href: '/dashboard/employee/salary-slips', label: 'My Salary Slips', icon: FileText },
+    // { href: '/dashboard/employee/salary-slips', label: 'My Salary Slips', icon: FileText },
   ];
 
   const navItems = user?.role === 'ADMIN' ? adminNavItems : employeeNavItems;
@@ -408,12 +408,13 @@ const Navbar = () => {
                     </Button>
                   </SheetTrigger>
                   <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-                    <SheetHeader>
+
+                    {/* <SheetHeader>
                       <SheetTitle>Menu</SheetTitle>
                       <SheetDescription>
                         Navigate through the application
                       </SheetDescription>
-                    </SheetHeader>
+                    </SheetHeader> */}
                     
                     <div className="flex flex-col space-y-4 mt-6">
                       {/* User Profile Section */}

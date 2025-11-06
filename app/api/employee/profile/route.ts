@@ -25,7 +25,6 @@ export async function GET(request: NextRequest) {
     const salarySlips = await SalarySlip.find({ 'employee.userId': userId })
     .sort({ 'salary.year': -1, 'salary.month': -1 });
 
-    console.log('Employee salary fetched successfully' , salarySlips);
 
     return NextResponse.json({
       employee,

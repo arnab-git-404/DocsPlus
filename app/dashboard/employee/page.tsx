@@ -331,15 +331,15 @@ export default function EmployeeDashboardPage() {
   };
 
   const calculateYTDEarnings = () => {
-    return salarySlips.reduce((total, slip) => total + slip.netSalary, 0);
+    return salarySlips.reduce((total, slip) => total + slip.salary.netSalary, 0);
   };
 
   const getLastPayment = () => {
     if (salarySlips.length === 0) return null;
     const lastSlip = salarySlips[0];
     return {
-      amount: lastSlip.netSalary,
-      date: new Date(lastSlip.generatedAt).toLocaleDateString('en-IN', { 
+      amount: lastSlip.salary.netSalary,
+      date: new Date(lastSlip.createdAt).toLocaleDateString('en-IN', {
         month: 'short', 
         year: 'numeric' 
       })
@@ -424,7 +424,7 @@ export default function EmployeeDashboardPage() {
       bgColor: 'bg-purple-100 dark:bg-purple-900',
     },
     {
-      title: 'Last Payment',
+      title: 'Last Payment Date',
       value: lastPayment ? `₹${lastPayment.amount?.toLocaleString('en-IN')}` : 'N/A',
       description: lastPayment ? lastPayment.date : 'No payment history',
       icon: Calendar,
