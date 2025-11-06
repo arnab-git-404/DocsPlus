@@ -134,7 +134,6 @@ if (token && (pathname === "/login" || pathname === "/signup")) {
     return NextResponse.redirect(new URL("/dashboard/employee", request.url));
   }
 
-  
   // Redirect root dashboard to role-specific dashboard
   if (pathname === "/dashboard") {
     if (userRole === "ADMIN") {
@@ -145,7 +144,6 @@ if (token && (pathname === "/login" || pathname === "/signup")) {
   }
 
     
-
   // Add user info to request headers (for API routes to access)
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-user-id", payload.userId as string);

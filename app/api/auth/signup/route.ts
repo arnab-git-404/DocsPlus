@@ -365,6 +365,7 @@ export async function POST(request: NextRequest) {
     const userData: any = {
       employeeId,
       name,
+      email,
       role: role || 'EMPLOYEE',
       status: 'PENDING',
       activationToken,

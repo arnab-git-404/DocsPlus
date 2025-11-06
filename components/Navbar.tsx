@@ -262,6 +262,7 @@ const Navbar = () => {
       });
 
       if (response.ok) {
+        localStorage.clear();
         router.push('/login');
       }
     } catch (error) {

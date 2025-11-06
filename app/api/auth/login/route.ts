@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
 
 
     const { email, password, role } = await request.json();
-
+    
     // Validate input
     if (!email || !password || !role) {
       return NextResponse.json(

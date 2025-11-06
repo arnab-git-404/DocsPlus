@@ -84,6 +84,7 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface IEmployee extends Document {
   employeeId: string;
   name: string;
+  email:string;
   gender?: "Male" | "Female" | "Other";
   dob?: Date;
   contact: {
@@ -141,6 +142,10 @@ const EmployeeSchema = new Schema<IEmployee>(
       type: String,
       required: [true, "Name is required"],
       trim: true,
+    },
+    email:{
+      type: String,
+      trim: true
     },
     gender: {
       type: String,
