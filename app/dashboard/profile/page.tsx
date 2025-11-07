@@ -194,6 +194,8 @@ const handleRequestPasswordReset = async () => {
 
     const response = await fetch('/api/auth/password/request-reset-password', {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: profile.email }),
     });
 
     const data = await response.json();

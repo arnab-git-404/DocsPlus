@@ -198,7 +198,7 @@ export async function sendEmail({
     const transporter = createTransporter();
 
     const mailOptions: any = {
-      from: `"${process.env.EMAIL_FROM_NAME || 'HACKENCE SERVICES'}" <${process.env.SMTP_USER}>`,
+      from: `"HACKENCE SERVICES" <${process.env.SMTP_USER}>`,
       to,
       subject,
       html,

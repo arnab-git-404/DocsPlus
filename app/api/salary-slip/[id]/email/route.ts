@@ -45,7 +45,7 @@ export async function POST(
     // Send email with PDF attachment
     await sendEmail({
       to: salarySlip.employee.email,
-      subject: `Salary Slip - ${salarySlip.salary.month} ${salarySlip.salary.year}`,
+      subject: `Salary Slip - ${salarySlip.salary.month} ${salarySlip.salary.year} - Hackence Services`,
       html: emailTemplates.salarySlip(
         salarySlip.employee.name,
         salarySlip.salary.month,
