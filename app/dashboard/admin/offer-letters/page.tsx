@@ -445,7 +445,7 @@ export default function OfferLettersPage() {
                               <DropdownMenuItem
                                 onClick={() =>
                                   router.push(
-                                    `/dashboard/admin/offer-letters/${offer._id}/edit`
+                                    `/dashboard/admin/offer-letters/edit/${offer._id}`
                                   )
                                 }
                               >
@@ -460,9 +460,12 @@ export default function OfferLettersPage() {
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() =>
-                                  window.open(
-                                    `/api/offer-letter/${offer._id}/pdf`,
-                                    "_blank"
+                                  // window.open(
+                                  //   `/api/offer-letter/${offer._id}/pdf`,
+                                  //   "_blank"
+                                  // )
+                                  router.push(
+                                    `/dashboard/admin/offer-letters/view/${offer._id}`
                                   )
                                 }
                               >

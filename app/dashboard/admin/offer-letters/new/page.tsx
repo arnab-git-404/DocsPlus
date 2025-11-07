@@ -31,6 +31,7 @@ import {
   DollarSign,
   FileText,
 } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 interface FormData {
   // Candidate Information
@@ -165,6 +166,9 @@ export default function CreateOfferLetterPage() {
         return;
       }
 
+      const toastId = toast.loading("Creating offer letter...");
+
+
       const payload = {
         ...formData,
         salary: parseFloat(formData.salary),
@@ -182,8 +186,9 @@ export default function CreateOfferLetterPage() {
       if (response.ok) {
         setMessage({ 
           type: 'success', 
-          text: `Offer letter ${status === 'DRAFT' ? 'saved as draft' : 'created and ready to send'}!` 
+          text: `Offer letter ${status === 'DRAFT' ? 'saved as draft' : 'Created successfully'}!` 
         });
+        toast.success(`Offer letter ${status === 'DRAFT' ? 'saved as draft' : 'Created successfully'}!`, { id: toastId });
         
         setTimeout(() => {
           router.push('/dashboard/admin/offer-letters');
@@ -697,7 +702,7 @@ export default function CreateOfferLetterPage() {
             Save as Draft
           </Button>
           <Button
-            onClick={() => handleSubmit('SENT')}
+            onClick={() => handleSubmit('DRAFT')}
             disabled={loading}
             className="flex-1"
           >

@@ -76,16 +76,19 @@ export async function GET(request: NextRequest) {
 // POST - Create new offer letter
 export async function POST(request: NextRequest) {
   try {
-    const user = await verifyAuth(request);
+    // const user = await verifyAuth(request);
 
-    if (!user) {
+    const userId = request.headers.get('x-user-id');
+    const userRole = request.headers.get('x-user-role');
+
+    if (!userId || !userRole) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    if (user.role !== 'ADMIN') {
+    if (userRole !== 'ADMIN') {
       return NextResponse.json(
         { error: 'Access denied. Admin only.' },
         { status: 403 }
@@ -116,7 +119,7 @@ export async function POST(request: NextRequest) {
     const offerLetter = await OfferLetter.create({
       ...body,
       offerNumber,
-      createdBy: user.userId,
+      createdBy: userId,
     });
 
     return NextResponse.json({

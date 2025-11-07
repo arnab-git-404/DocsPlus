@@ -30,6 +30,7 @@ import {
   DollarSign,
   FileText,
 } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 interface FormData {
   candidateName: string;
@@ -201,6 +202,8 @@ export default function EditOfferLetterPage() {
       setSaving(true);
       setMessage(null);
 
+      const toastId = toast.loading("Updating offer letter...");
+
       if (!formData.candidateName || !formData.candidateEmail || !formData.position) {
         setMessage({ type: 'error', text: 'Please fill in all required fields' });
         setSaving(false);
@@ -222,6 +225,9 @@ export default function EditOfferLetterPage() {
 
       if (response.ok) {
         setMessage({ type: 'success', text: 'Offer letter updated successfully!' });
+        localStorage.clear();
+        toast.success("Offer letter updated successfully!" , { id: toastId });
+
         setTimeout(() => {
           router.push(`/dashboard/admin/offer-letters`);
         }, 2000);
