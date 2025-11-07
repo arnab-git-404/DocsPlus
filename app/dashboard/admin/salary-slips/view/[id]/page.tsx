@@ -492,9 +492,9 @@ export default function ViewSalarySlipPage() {
             <Separator className="my-6" />
 
             {/* Net Salary */}
-            <div className="flex justify-between items-center bg-blue-50 p-6 rounded-lg">
+            <div className="flex justify-between items-center  p-6 rounded-lg">
               <span className="text-xl font-bold">Net Salary</span>
-              <span className="text-2xl font-bold text-blue-600">
+              <span className="text-2xl font-bold text-green-600">
                 ₹{salarySlip.salary.netSalary.toLocaleString('en-IN')}
               </span>
             </div>

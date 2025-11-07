@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { Loader2, Upload, Eye, Save, Send } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 interface Employee {
   _id: string;
@@ -189,14 +190,17 @@ export default function GenerateSalarySlipPage() {
     setError('');
     setSuccess('');
 
+    
     if (!formData.employeeMongoId || !formData.designation) {
       setError('Please select an employee and fill all required fields');
       return;
     }
-
+    
     setLoading(true);
-
+    const toastId = toast.loading("Creating Salary Slip ...");
+    
     try {
+
       const response = await fetch('/dashboard/admin/salary-slips/api/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -250,14 +254,18 @@ export default function GenerateSalarySlipPage() {
 
       setSuccess(`Salary slip ${status === 'DRAFT' ? 'saved as draft' : 'generated'} successfully!`);
       
-      // setTimeout(() => {
-      //   router.push('/dashboard/admin/salary-slips');
-      // }, 2000);
+      toast.success(`Salary Slip ${status === 'DRAFT' ? 'Saved as Draft' : 'Generated Successfully'} !`, { id: toastId });
+      
+      setTimeout(() => {
+        router.push('/dashboard/admin/salary-slips');
+      }, 2000);
       
     } catch (err: any) {
       setError(err.message);
+      toast.error(err.message, { id: toastId });
     } finally {
       setLoading(false);
+      toast.dismiss(toastId);
     }
   };
 
@@ -618,7 +626,7 @@ export default function GenerateSalarySlipPage() {
               <Separator />
 
               <div className="space-y-2">
-                <Button
+                {/* <Button
                   onClick={handlePreview}
                   variant="outline"
                   className="w-full"
@@ -626,12 +634,12 @@ export default function GenerateSalarySlipPage() {
                 >
                   <Eye className="mr-2 h-4 w-4" />
                   Preview
-                </Button>
+                </Button> */}
 
                 <Button
                   onClick={() => handleSave('DRAFT')}
                   variant="outline"
-                  className="w-full"
+                  className="w-full hover:cursor-pointer"
                   disabled={loading || !formData.employeeMongoId}
                 >
                   {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
@@ -640,7 +648,7 @@ export default function GenerateSalarySlipPage() {
 
                 <Button
                   onClick={() => handleSave('GENERATED')}
-                  className="w-full"
+                  className="w-full hover:cursor-pointer"
                   disabled={loading || !formData.employeeMongoId}
                 >
                   {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}

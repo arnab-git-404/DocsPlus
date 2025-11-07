@@ -11,16 +11,19 @@ const JWT_SECRET = new TextEncoder().encode(
 
 export async function POST(request: NextRequest) {
   try {
-    const cookieStore = cookies();
-    const token = (await cookieStore).get('auth-token')?.value;
+    // const cookieStore = cookies();
+    // const token = (await cookieStore).get('auth-token')?.value;
 
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const userId = request.headers.get('x-user-id');
+    const userRole = request.headers.get('x-user-role');
 
-    const decodedUser  = (await jwtVerify(token, JWT_SECRET)).payload as any;
+    // if (!token) {
+      // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // }
 
-    if (decodedUser.role !== 'ADMIN') {
+    // const decodedUser  = (await jwtVerify(token, JWT_SECRET)).payload as any;
+
+    if (userRole !== 'ADMIN') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -30,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     const salarySlip = await SalarySlip.create({
       ...data,
-      generatedBy: decodedUser.userId,
+      generatedBy: userId,
     });
 
     return NextResponse.json(

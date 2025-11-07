@@ -101,7 +101,7 @@ const SalarySlipSchema = new Schema<ISalarySlip>(
         type: Number,
         required: true,
       },
-      basic: {
+      basicSalary: {
         type: Number,
         required: true,
       },
