@@ -125,7 +125,7 @@ A comprehensive HR management system for generating salary slips, invoices, and 
 <summary>Click to view screenshots</summary>
 
 ### Admin Dashboard
-![Admin Dashboard](https://via.placeholder.com/800x400?text=Admin+Dashboard)
+![Admin Dashboard](image.png)
 
 ### Employee Management
 ![Employee Management](https://via.placeholder.com/800x400?text=Employee+Management)
