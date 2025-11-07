@@ -140,7 +140,7 @@ A comprehensive HR management system for generating salary slips, invoices, and 
 ![Offer Letter](image-3.png)
 
 ### Invoice System
-![Invoice]!(image-4.png)
+![Invoice](image-4.png)
 
 </details>
 
