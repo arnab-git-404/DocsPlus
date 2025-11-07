@@ -277,6 +277,7 @@ For Admins
 
 ---
 ## 📚 API Documentation
+``` 
 POST /api/auth/signup
 POST /api/auth/login
 POST /api/auth/logout
@@ -302,6 +303,7 @@ POST /api/offer-letters
 GET  /api/offer-letters/:id
 PUT  /api/offer-letters/:id
 DELETE /api/offer-letters/:id
+```
 ---
 ## 🗂️ Project Structure
 
