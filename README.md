@@ -203,7 +203,7 @@ Create a `.env.local` file in the root directory and add the following variables
 # Database
 MONGODB_URI=mongodb://localhost:27017/docsplus
 # or for MongoDB Atlas:
-# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/docsplus
+# MONGODB_URI=""
 
 # JWT Secret
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
