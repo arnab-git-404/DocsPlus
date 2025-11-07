@@ -52,12 +52,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // if (user.status !== 'ACTIVE') {
-    //   return NextResponse.json(
-    //     { error: 'Account not activated' },
-    //     { status: 403 }
-    //   );
-    // }
+    if (user.status !== 'ACTIVE') {
+      return NextResponse.json(
+        { error: 'Account not activated' },
+        { status: 403 }
+      );
+    }
 
 
     // Verify password
