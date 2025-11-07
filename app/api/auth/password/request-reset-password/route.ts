@@ -6,15 +6,23 @@ import { sendGenericEmail } from "@/lib/mail";
 
 export async function POST(request: NextRequest) {
   try {
-    const userId = request.headers.get("x-user-id");
+    // const userId = request.headers.get("x-user-id");
 
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorizedd" }, { status: 401 });
-    }
+    // if (!userId) {
+      // return NextResponse.json({ error: "Unauthorizedd" }, { status: 401 });
+    // }
+
+    const { email } = await request.json();
+
 
     await dbConnect();
 
-    const dbUser = await User.findById(userId);
+    const dbUser = await User.findOne({  
+      $or: [
+      { 'email': email },
+      { 'contact.email': email }
+    ]
+  });
 
     if (!dbUser) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -33,9 +41,16 @@ export async function POST(request: NextRequest) {
       process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
     }/reset-password/?resetToken=${resetToken}`;
 
+const userEmail = dbUser.contact?.email || dbUser.email;
+
+    if (!userEmail) {
+      return NextResponse.json({ error: "No email found for user" }, { status: 400 });
+    }
+
+
     // Send email
     await sendGenericEmail({
-      to: dbUser.email,
+      to: userEmail,
       subject: "Password Reset Request",
       title: "Reset Your Password",
       content: `
