@@ -171,6 +171,12 @@ const LoginPage = () => {
                   )}
                 </button>
                 </div> 
+
+              <Label className='hover:cursor-pointer hover:text-red-400 '><Link href="/forgot-password">
+                Forget Password?
+              </Link>
+              </Label>
+
             </div>
           </CardContent>
 
