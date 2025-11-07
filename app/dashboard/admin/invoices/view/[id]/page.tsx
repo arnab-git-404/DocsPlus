@@ -715,7 +715,7 @@ export default function ViewInvoicePage() {
             <AlertCircle className="h-12 w-12 text-red-600 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Invoice Not Found</h3>
             <p className="text-gray-600 mb-4">The invoice you're looking for doesn't exist.</p>
-            <Button onClick={() => router.push('/dashboard/admin/invoices')}>
+            <Button onClick={() => router.back()}>
               Back to Invoices
             </Button>
           </CardContent>
@@ -941,7 +941,7 @@ export default function ViewInvoicePage() {
                 </thead>
                 <tbody>
                   {invoice.items.map((item, index) => (
-                    <tr key={index} className="border-b hover:bg-gray-50">
+                    <tr key={index} className="border-b ">
                       <td className="py-3 px-2 text-sm">{index + 1}</td>
                       <td className="py-3 px-2 text-sm font-medium">{item.item}</td>
                       <td className="py-3 px-2 text-sm text-gray-600">{item.description}</td>
@@ -985,9 +985,9 @@ export default function ViewInvoicePage() {
 
                 <Separator />
 
-                <div className="flex justify-between text-lg font-bold bg-blue-50 px-4 py-3 rounded">
+                <div className="flex justify-between text-lg font-bold  px-4 py-3 rounded">
                   <span>Total:</span>
-                  <span className="text-blue-600">₹{invoice.total.toFixed(2)}</span>
+                  <span className="text-green-400">₹{invoice.total.toFixed(2)}</span>
                 </div>
               </div>
             </div>

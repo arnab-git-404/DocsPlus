@@ -6,6 +6,7 @@ import InvoiceForm from '../components/InvoiceForm';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from 'react-hot-toast';
 
 export default function NewInvoicePage() {
   const router = useRouter();
@@ -17,7 +18,7 @@ export default function NewInvoicePage() {
     setError('');
     setSuccess('');
     setLoading(true);
-
+      const toastId = toast.loading("Creating Invoice ...");
     try {
       const response = await fetch('/api/invoice', {
         method: 'POST',
@@ -31,19 +32,22 @@ export default function NewInvoicePage() {
         throw new Error(data.error || 'Failed to create invoice');
       }
 
+      localStorage.clear();
       setSuccess('Invoice created successfully!');
-      
+      toast.success("Invoice Created Successfully !", { id: toastId });
       setTimeout(() => {
         if (invoiceData.status === 'SENT') {
-          router.push(`/dashboard/invoice/view/${data.invoice._id}`);
+          router.push(`/dashboard/invoices/view/${data.invoice._id}`);
         } else {
-          router.push('/dashboard/invoice');
+          router.push('/dashboard/invoices');
         }
       }, 1500);
     } catch (err: any) {
       setError(err.message);
+      toast.error(err.message, { id: toastId });
     } finally {
       setLoading(false);
+      toast.dismiss(toastId);
     }
   };
 

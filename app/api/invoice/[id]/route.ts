@@ -79,16 +79,19 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const user = await verifyAuth(request);
+    // const user = await verifyAuth(request);
 
-    if (!user) {
+        const userId = request.headers.get('x-user-id');
+        const userRole = request.headers.get('x-user-role');
+
+    if (!userId) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    if (user.role !== 'ADMIN') {
+    if (userRole !== 'ADMIN') {
       return NextResponse.json(
         { error: 'Access denied. Admin only.' },
         { status: 403 }
@@ -116,7 +119,7 @@ export async function PUT(
     }
 
     // Check if user owns this invoice
-    if (invoice.createdBy.toString() !== user.userId) {
+    if (invoice.createdBy.toString() !== userId) {
       return NextResponse.json(
         { error: 'Access denied' },
         { status: 403 }
@@ -159,16 +162,19 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const user = await verifyAuth(request);
+    // const user = await verifyAuth(request);
 
-    if (!user) {
+        const userId = request.headers.get('x-user-id');
+        const userRole = request.headers.get('x-user-role');
+
+    if (!userId) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    if (user.role !== 'ADMIN') {
+    if (userRole !== 'ADMIN') {
       return NextResponse.json(
         { error: 'Access denied. Admin only.' },
         { status: 403 }
@@ -195,7 +201,7 @@ export async function DELETE(
     }
 
     // Check if user owns this invoice
-    if (invoice.createdBy.toString() !== user.userId) {
+    if (invoice.createdBy.toString() !== userId) {
       return NextResponse.json(
         { error: 'Access denied' },
         { status: 403 }

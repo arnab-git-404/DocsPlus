@@ -6,10 +6,15 @@ import { Button } from '@/components/ui/button';
 import { Plus, FileText } from 'lucide-react';
 import InvoiceTable from './components/InvoiceTable';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import toast from 'react-hot-toast';
+import { pdf } from '@react-pdf/renderer';
+import { InvoiceDocument } from '@/components/templates/Invoice';
+
 
 export default function InvoicePage() {
   const router = useRouter();
   const [invoices, setInvoices] = useState([]);
+  const [invoiceByID, setInvoiceByID] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -55,9 +60,143 @@ export default function InvoicePage() {
     }
   };
 
-  const handleDownload = (id: string) => {
-    window.open(`/api/invoice/${id}/download`, '_blank');
-  };
+//   const handleDownload = async (id: string) => {
+//     // window.open(`/api/invoice/${id}/download`, '_blank');
+
+//  try {
+//       setLoading(true);
+
+//       // Try to get from localStorage first
+//       const cachedData = localStorage.getItem(`invoice_${id}`);
+//       if (cachedData) {
+//         const cached = JSON.parse(cachedData);
+//         // Check if cache is less than 5 minutes old
+//         if (Date.now() - cached.timestamp < 5 * 60 * 1000) {
+//           console.log('📦 Using cached invoice data');
+//           setInvoiceByID(cached.data);
+//           setLoading(false);
+//           return;
+//         }
+//       }
+
+//       // Fetch from API
+//       console.log('🌐 Fetching invoice from API');
+//       const response = await fetch(`/api/invoice/${id}`);
+//       const data = await response.json();
+
+//       if (response.ok) {
+//         setInvoiceByID(data.invoice);
+//         // Cache the data
+//         localStorage.setItem(
+//           `invoice_${id}`,
+//           JSON.stringify({
+//             data: data.invoice,
+//             timestamp: Date.now(),
+//           })
+//         );
+//       } else {
+//         // setMessage({ type: 'error', text: data.error || 'Failed to fetch invoice' });
+//         toast.error(data.error || 'Failed to fetch invoice');
+//       }
+//     } catch (error) {
+//       toast.error('Failed to fetch invoice');
+//     } finally {
+//       setLoading(false);
+//     }
+
+
+//     if (!invoiceByID) return;
+
+//       const toastId = toast.loading("Downloading Invoice ...");
+
+
+//     try {
+//       // setDownloadLoading(true);
+//       console.log('📥 Generating PDF...');
+
+//       // Generate PDF blob
+//       const blob = await pdf(<InvoiceDocument data={invoiceByID} />).toBlob();
+
+//       // Create download link
+//       const url = URL.createObjectURL(blob);
+//       const link = document.createElement('a');
+//       link.href = url;
+//       link.download = `${invoiceByID.invoiceNumber}.pdf`;
+//       document.body.appendChild(link);
+//       link.click();
+//       document.body.removeChild(link);
+//       URL.revokeObjectURL(url);
+
+//       // setMessage({ type: 'success', text: 'PDF downloaded successfully!' });
+//       toast.success("Invoice Downloaded Successfully !", { id: toastId });
+//     } catch (error) {
+//       console.error('Download error:', error);
+//       toast.error('Failed to download PDF');
+//     } finally {
+//       // setDownloadLoading(false);
+//     }
+//   };
+
+
+const handleDownload = async (id: string) => {
+  const toastId = toast.loading("Preparing Invoice...");
+
+  try {
+    // setLoading(true);
+
+    let invoiceData;
+    const cachedData = localStorage.getItem(`invoice_${id}`);
+    if (cachedData) {
+      const cached = JSON.parse(cachedData);
+      if (Date.now() - cached.timestamp < 5 * 60 * 1000) {
+        console.log("📦 Using cached invoice data");
+        invoiceData = cached.data;
+      }
+    }
+
+    if (!invoiceData) {
+      console.log("🌐 Fetching invoice from API");
+      const response = await fetch(`/api/invoice/${id}`);
+      const data = await response.json();
+
+      if (!response.ok) throw new Error(data.error || "Failed to fetch invoice");
+
+      invoiceData = data.invoice;
+      localStorage.setItem(
+        `invoice_${id}`,
+        JSON.stringify({ data: invoiceData, timestamp: Date.now() })
+      );
+    }
+
+    setInvoiceByID(invoiceData);
+
+    console.log("📥 Generating PDF...");
+    const blob = await pdf(<InvoiceDocument data={invoiceData} />).toBlob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${invoiceData.invoiceNumber}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    toast.success("Invoice Downloaded Successfully!", { id: toastId });
+  } catch (error: any) {
+    console.error("❌ Download error:", error);
+    toast.error(error.message || "Failed to download invoice", { id: toastId });
+  } finally {
+    // setLoading(false);
+  }
+};
+
+
+
+
+
+
+
+
 
   const handleEmail = async (id: string) => {
     try {
@@ -102,7 +241,7 @@ export default function InvoicePage() {
       ) : invoices.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-muted-foreground mb-4">No invoices found</p>
-          <Button onClick={() => router.push('/dashboard/invoice/new')}>
+          <Button onClick={() => router.push('/dashboard/invoices/new')}>
             Create Your First Invoice
           </Button>
         </div>

@@ -740,7 +740,7 @@ export default function InvoiceForm({ onSubmit, loading, initialData }: InvoiceF
   const handleSubmit = (status: 'DRAFT' | 'SENT') => {
     const invoiceData = {
       ...formData,
-      invoiceNumber: nextInvoiceNumber, // ✅ Pass the fetched invoice number
+      invoiceNumber: nextInvoiceNumber, 
       items,
       subtotal: totals.subtotal,
       discountAmount: totals.discountAmount,
@@ -756,9 +756,9 @@ export default function InvoiceForm({ onSubmit, loading, initialData }: InvoiceF
     <div className="space-y-6">
       {/* Invoice Number Preview */}
       {!initialData && (
-        <Alert className="bg-blue-50 border-blue-200">
+        <Alert className=" border-blue-200">
           <Hash className="h-4 w-4 text-blue-600" />
-          <AlertDescription className="text-blue-800">
+          <AlertDescription className="">
             {loadingInvoiceNumber ? (
               <span>Loading invoice number...</span>
             ) : nextInvoiceNumber ? (
@@ -773,9 +773,9 @@ export default function InvoiceForm({ onSubmit, loading, initialData }: InvoiceF
       )}
 
       {initialData?.invoiceNumber && (
-        <Alert className="bg-gray-50 border-gray-200">
-          <Hash className="h-4 w-4 text-gray-600" />
-          <AlertDescription className="text-gray-800">
+        <Alert className="">
+          <Hash className="h-4 w-4 " />
+          <AlertDescription className="">
             Invoice Number: <strong className="font-bold">{initialData.invoiceNumber}</strong>
           </AlertDescription>
         </Alert>
@@ -1189,7 +1189,7 @@ export default function InvoiceForm({ onSubmit, loading, initialData }: InvoiceF
         </Button>
         <Button
           type="button"
-          onClick={() => handleSubmit('SENT')}
+          onClick={() => handleSubmit('DRAFT')}
           disabled={loading}
           className="flex-1"
         >

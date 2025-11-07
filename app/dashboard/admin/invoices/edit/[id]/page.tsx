@@ -6,6 +6,7 @@ import InvoiceForm from '../../components/InvoiceForm';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from 'react-hot-toast';
 
 export default function EditInvoicePage() {
   const router = useRouter();
@@ -41,6 +42,8 @@ export default function EditInvoicePage() {
     setSuccess('');
     setLoading(true);
 
+      const toastId = toast.loading("Editing Invoice ...");
+
     try {
       const response = await fetch(`/api/invoice/${params.id}`, {
         method: 'PUT',
@@ -54,15 +57,19 @@ export default function EditInvoicePage() {
         throw new Error(data.error || 'Failed to update invoice');
       }
 
+      localStorage.clear();
       setSuccess('Invoice updated successfully!');
-      
+
+      toast.success("Invoice updated successfully!" , { id: toastId });
       setTimeout(() => {
-        router.push('/dashboard/invoices');
+        router.push('/dashboard/admin/invoices');
       }, 1500);
     } catch (err: any) {
       setError(err.message);
+      toast.error(err.message || "Failed to update invoice" , { id: toastId });
     } finally {
       setLoading(false);
+      // toast.dismiss(toastId);
     }
   };
 
@@ -78,7 +85,7 @@ export default function EditInvoicePage() {
     return (
       <div className="text-center py-12">
         <p className="text-muted-foreground mb-4">Invoice not found</p>
-        <Button onClick={() => router.push('/dashboard/invoices')}>
+        <Button onClick={() => router.back()}>
           Back to Invoices
         </Button>
       </div>
