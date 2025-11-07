@@ -54,12 +54,12 @@ export async function GET(
     }
 
     // Check if user owns this invoice
-    if (invoice.createdBy.toString() !== userId) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      );
-    }
+    // if (invoice.createdBy.toString() !== userId) {
+    //   return NextResponse.json(
+    //     { error: 'Access denied' },
+    //     { status: 403 }
+    //   );
+    // }
 
     // For now, we'll return a success message
     // In production, you would integrate with a PDF generation library like:

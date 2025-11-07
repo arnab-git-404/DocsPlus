@@ -14,22 +14,22 @@ export async function GET(
   try {
 
     const userId = request.headers.get('x-user-id');
-
+    const userRole = request.headers.get('x-user-role');
     // const user = await verifyAuth(request);
 
-    // if (!user) {
-    //   return NextResponse.json(
-    //     { error: 'Unauthorized' },
-    //     { status: 401 }
-    //   );
-    // }
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
 
-    // if (user.role !== 'ADMIN') {
-    //   return NextResponse.json(
-    //     { error: 'Access denied. Admin only.' },
-    //     { status: 403 }
-    //   );
-    // }
+    if (userRole !== 'ADMIN') {
+      return NextResponse.json(
+        { error: 'Access denied. Admin only.' },
+        { status: 403 }
+      );
+    }
 
      const { id } = await params; 
 
@@ -52,13 +52,13 @@ export async function GET(
       );
     }
 
-    // Check if user owns this invoice
-    if (invoice.createdBy.toString() !== userId) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      );
-    }
+    // allow all admin to check any invoice
+    // if (invoice.createdBy.toString() !== userId) {
+    //   return NextResponse.json(
+    //     { error: 'Access denied' },
+    //     { status: 403 }
+    //   );
+    // }
 
     return NextResponse.json({
       success: true,
@@ -118,13 +118,13 @@ export async function PUT(
       );
     }
 
-    // Check if user owns this invoice
-    if (invoice.createdBy.toString() !== userId) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      );
-    }
+    // By admin, no need to check ownership
+    // if (invoice.createdBy.toString() !== userId) {
+    //   return NextResponse.json(
+    //     { error: 'Access denied' },
+    //     { status: 403 }
+    //   );
+    // }
 
     const body = await request.json();
 
@@ -200,13 +200,13 @@ export async function DELETE(
       );
     }
 
-    // Check if user owns this invoice
-    if (invoice.createdBy.toString() !== userId) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      );
-    }
+    // allow all admin to delete any invoice
+    // if (invoice.createdBy.toString() !== userId) {
+    //   return NextResponse.json(
+    //     { error: 'Access denied' },
+    //     { status: 403 }
+    //   );
+    // }
 
     await Invoice.findByIdAndDelete(id);
 

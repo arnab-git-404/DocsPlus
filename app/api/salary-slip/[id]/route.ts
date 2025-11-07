@@ -49,9 +49,9 @@ export async function DELETE(
 ) {
   try {
     // const user = getUserFromHeaders(request);
+    const userRole = request.headers.get('x-user-role');
 
     const { id }= await params;
-        const userRole = request.headers.get('x-user-role');
 
 
     if (userRole !== 'ADMIN') {

@@ -4,41 +4,24 @@ import { jwtVerify } from 'jose';
 import dbConnect from '@/lib/db';
 import Invoice from '@/models/Invoice';
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_ACCESS_SECRET
-);
 
-async function verifyAuth(request: NextRequest) {
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('auth-token')?.value;
-
-    if (!token) {
-      return null;
-    }
-
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-    console.log('Verified payload:', payload.role);
-    
-    return payload;
-  } catch (error) {
-    return null;
-  }
-}
 
 // GET - Fetch all invoices
 export async function GET(request: NextRequest) {
   try {
-    const user = await verifyAuth(request);
+    // const user = await verifyAuth(request);
 
-    if (!user) {
+    const userId = request.headers.get('x-user-id');
+    const userRole = request.headers.get('x-user-role');
+
+    if (!userId) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    if (user.role !== 'ADMIN') {
+    if (userRole !== 'ADMIN') {
       return NextResponse.json(
         { error: 'Access denied. Admin only.' },
         { status: 403 }
@@ -55,7 +38,7 @@ export async function GET(request: NextRequest) {
     const endDate = searchParams.get('endDate');
 
     // Build query
-    let query: any = { createdBy: user.userId };
+    let query: any = {  };
 
     if (status && status !== 'ALL') {
       query.status = status;
@@ -97,16 +80,19 @@ export async function GET(request: NextRequest) {
 // POST - Create new invoice
 export async function POST(request: NextRequest) {
   try {
-    const user = await verifyAuth(request);
+    // const user = await verifyAuth(request);
 
-    if (!user) {
+    const userId = request.headers.get('x-user-id');
+    const userRole = request.headers.get('x-user-role');
+
+    if (!userId) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    if (user.role !== 'ADMIN') {
+    if (userRole !== 'ADMIN') {
       return NextResponse.json(
         { error: 'Access denied. Admin only.' },
         { status: 403 }
@@ -172,7 +158,7 @@ export async function POST(request: NextRequest) {
     // Create invoice
     const invoice = new Invoice({
       ...body,
-      createdBy: user.userId,
+      createdBy: userId,
       invoiceDate: body.invoiceDate || new Date(),
     });
 

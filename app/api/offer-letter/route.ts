@@ -10,15 +10,14 @@ export async function GET(request: NextRequest) {
   try {
     // const user = await verifyAuth(request);
     const userId = request.headers.get('x-user-id');
+    const userRole = request.headers.get('x-user-role');
 
-
-
-    // if (user.role !== 'ADMIN') {
-    //   return NextResponse.json(
-    //     { error: 'Access denied. Admin only.' },
-    //     { status: 403 }
-    //   );
-    // }
+    if (userRole !== 'ADMIN') {
+      return NextResponse.json(
+        { error: 'Access denied. Admin only.' },
+        { status: 403 }
+      );
+    }
 
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
@@ -28,7 +27,7 @@ export async function GET(request: NextRequest) {
 
     await dbConnect();
 
-    const query: any = { createdBy: userId };
+    const query: any = {  };
 
     if (status && status !== 'ALL') {
       query.status = status;

@@ -14,12 +14,7 @@ export async function GET(
   try {
     // const user = await verifyAuth(request);
 
-    // if (!user) {
-    //   return NextResponse.json(
-    //     { error: 'Unauthorized' },
-    //     { status: 401 }
-    //   );
-    // }
+
 
     // if (user.role !== 'ADMIN') {
     //   return NextResponse.json(
@@ -29,6 +24,14 @@ export async function GET(
     // }
 
     const userId = request.headers.get('x-user-id');
+
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
 
     const { id } = await params;
 
@@ -50,12 +53,12 @@ export async function GET(
       );
     }
 
-    if (offerLetter.createdBy.toString() !== userId) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      );
-    }
+    // if (offerLetter.createdBy.toString() !== userId) {
+    //   return NextResponse.json(
+    //     { error: 'Access denied' },
+    //     { status: 403 }
+    //   );
+    // }
 
     return NextResponse.json({
       success: true,
@@ -115,12 +118,14 @@ export async function PUT(
       );
     }
 
-    if (offerLetter.createdBy.toString() !== userId) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      );
-    }
+    // this check is commented out to allow admins to edit all offer letters
+
+    // if (offerLetter.createdBy.toString() !== userId) {
+    //   return NextResponse.json(
+    //     { error: 'Access denied' },
+    //     { status: 403 }
+    //   );
+    // }
 
     const body = await request.json();
 
@@ -176,6 +181,15 @@ export async function DELETE(
 
     const userId = request.headers.get('x-user-id');
 
+
+       if (!userId) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+
     const { id } = await params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -196,12 +210,13 @@ export async function DELETE(
       );
     }
 
-    if (offerLetter.createdBy.toString() !== userId) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      );
-    }
+    // this check is commented out to allow admins to delete all offer letters
+    // if (offerLetter.createdBy.toString() !== userId) {
+    //   return NextResponse.json(
+    //     { error: 'Access denied' },
+    //     { status: 403 }
+    //   );
+    // }
 
     await OfferLetter.findByIdAndDelete(id);
 
