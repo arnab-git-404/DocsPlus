@@ -124,17 +124,23 @@ A comprehensive HR management system for generating salary slips, invoices, and 
 <details>
 <summary>Click to view screenshots</summary>
 
+### Company Employee Dashboard
+![Company Employee Dashboard](image-5.png)
+
 ### Admin Dashboard
 ![Admin Dashboard](image.png)
 
 ### Employee Management
-![Employee Management](https://via.placeholder.com/800x400?text=Employee+Management)
+![Employee Management](image-1.png)
 
 ### Salary Slip Generation
-![Salary Slip](https://via.placeholder.com/800x400?text=Salary+Slip)
+![Salary Slip](image-2.png)
+
+### Offer Letter System
+![Offer Letter](image-3.png)
 
 ### Invoice System
-![Invoice](https://via.placeholder.com/800x400?text=Invoice)
+![Invoice]!(image-4.png)
 
 </details>
 
