@@ -236,7 +236,7 @@ const EmployeeSchema = new Schema<IEmployee>(
           type: Number,
           default: 0,
         },
-        others: {
+        other: {
           title: {
             type: String,
             trim: true,
