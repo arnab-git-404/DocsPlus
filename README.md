@@ -285,19 +285,29 @@ GET  /api/auth/me
 POST /api/auth/activate
 POST /api/auth/password/request-reset-password
 POST /api/auth/password/reset-password/:token
+```
+```
 GET  /api/employees
 GET  /api/employees/:id
 POST /api/employees
 PUT  /api/employees/:id
 DELETE /api/employees/:id
+```
+```
 GET  /api/salary-slips
 POST /api/salary-slips/generate
 GET  /api/salary-slips/:id
+DELETE /api/salary-slips/:id
+```
+
+```
 GET  /api/invoices
 POST /api/invoices
 GET  /api/invoices/:id
 PUT  /api/invoices/:id
 DELETE /api/invoices/:id
+```
+```
 GET  /api/offer-letters
 POST /api/offer-letters
 GET  /api/offer-letters/:id
