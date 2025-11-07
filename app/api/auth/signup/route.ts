@@ -356,9 +356,10 @@ export async function POST(request: NextRequest) {
     const deductions: any = {};
     if (pfDeduction > 0) deductions.pf = pfDeduction;
     if (taxDeduction > 0) deductions.tax = taxDeduction;
+
     if (salary?.deductions?.other?.title && otherDeduction > 0) {
       deductions.other = {
-        title: salary.deductions.other.title,
+        title: salary?.deductions?.other?.title,
         amount: otherDeduction,
       };
     }

@@ -55,6 +55,9 @@ interface Employee {
   name: string;
   email: string;
   employeeId: string;
+  contact?: {
+    email: string;
+  };
   job: {
     designation: string;
     department: string;
@@ -75,7 +78,7 @@ interface PaginationData {
 }
 
 const CACHE_KEY = "employees_list";
-const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
+const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
 const ITEMS_PER_PAGE = 10;
 
 export default function EmployeesPage() {
@@ -126,6 +129,7 @@ export default function EmployeesPage() {
 
       // Fetch from API
       console.log("🌐 Fetching employees from API");
+
       const response = await fetch(
         `/api/admin/employees?page=${currentPage}&limit=${ITEMS_PER_PAGE}`
       );
@@ -156,7 +160,21 @@ export default function EmployeesPage() {
     }
   };
 
+
+  // Add debounced search  
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setCurrentPage(1);
+      fetchEmployees();
+    }, 500); // 500ms debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm]);
+
+
+
   const handleRefresh = () => {
+    localStorage.clear();
     setRefreshing(true);
     setCurrentPage(1);
     fetchEmployees(true);
@@ -172,10 +190,11 @@ export default function EmployeesPage() {
     const filtered = employees.filter(
       (emp) =>
         emp.name.toLowerCase().includes(term) ||
-        emp.email.toLowerCase().includes(term) ||
+        emp.email?.toLowerCase().includes(term) ||
+        emp.contact?.email.toLowerCase().includes(term) ||
         emp.employeeId.toLowerCase().includes(term) ||
-        emp.job.designation.toLowerCase().includes(term) ||
-        emp.job.department.toLowerCase().includes(term)
+        emp.job?.designation.toLowerCase().includes(term) ||
+        emp.job?.department.toLowerCase().includes(term)
     );
 
     setFilteredEmployees(filtered);
@@ -218,6 +237,8 @@ export default function EmployeesPage() {
   const handleDelete = async () => {
     if (!deleteId) return;
 
+    const toastId = toast.loading("Deleting employee...");
+    
     try {
       setDeleteLoading(true);
       const id = deleteId;
@@ -228,16 +249,22 @@ export default function EmployeesPage() {
       if (response.ok) {
         setEmployees((prev) => prev.filter((emp) => emp._id !== deleteId));
         localStorage.removeItem(CACHE_KEY);
+        toast.success("Employee deleted successfully", { id: toastId });
         setDeleteId(null);
       }
     } catch (error) {
       console.error("Failed to delete:", error);
+      toast.error("Failed to delete employee", { id: toastId });
     } finally {
       setDeleteLoading(false);
+      toast.dismiss(toastId);
     }
   };
 
   const handleExportCSV = async () => {
+    
+    const toastId = toast.loading("Exporting employees in csv...");
+    
     try {
       setExportLoading(true);
 
@@ -252,10 +279,13 @@ export default function EmployeesPage() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
+      toast.success("Employees exported successfully", { id: toastId });
     } catch (error) {
       console.error("Failed to export:", error);
+      toast.error("Failed to export employees", { id: toastId });
     } finally {
       setExportLoading(false);
+      toast.dismiss(toastId);
     }
   };
 
@@ -430,7 +460,7 @@ export default function EmployeesPage() {
                       <div>
                         <p className="font-medium">{employee.name}</p>
                         <p className="text-sm text-muted-foreground">
-                          {employee.email}
+                          {employee.contact?.email || employee.email} 
                         </p>
                       </div>
                     </TableCell>
@@ -480,9 +510,11 @@ export default function EmployeesPage() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem
                             onClick={() =>
-                              router.push(
-                                `/dashboard/admin/users/view/${employee._id}`
-                              )
+                              // router.push(
+                              //   `/dashboard/admin/employees/view/${employee._id}`
+                              // )
+
+                              toast.error("View Profile not implemented yet")
                             }
                             className="hover:cursor-pointer"
                           >
@@ -491,9 +523,11 @@ export default function EmployeesPage() {
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() =>
-                              router.push(
-                                `/dashboard/admin/users/edit/${employee._id}`
-                              )
+                              // router.push(
+                              //   `/dashboard/admin/users/edit/${employee._id}`
+                              // )
+
+                              toast.error("Edit Employee not implemented yet")
                             }
                             className="hover:cursor-pointer"
                           >
@@ -529,6 +563,8 @@ export default function EmployeesPage() {
 
           {/* Pagination */}
           {!searchTerm && pagination?.totalPages > 1 && (
+
+            // {pagination?.totalPages > 1 && (
             <div className="flex items-center justify-between px-6 py-4 border-t">
               <div className="text-sm text-muted-foreground">
                 Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{" "}
@@ -592,7 +628,11 @@ export default function EmployeesPage() {
                 </Button>
               </div>
             </div>
-          )}
+              
+
+
+                )}
+              
         </CardContent>
       </Card>
 

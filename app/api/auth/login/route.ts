@@ -38,7 +38,11 @@ export async function POST(request: NextRequest) {
 
     // Find user by email
     const user = await User.findOne({
-        email
+      $or: [
+      { 'email': email },
+      { 'contact.email': email }
+    ]
+
     }).select('+password');
 
     if (!user) {

@@ -22,10 +22,10 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
 
     // Get total count
-    const totalEmployees = await User.countDocuments({ role: 'EMPLOYEE' });
+    const totalEmployees = await User.countDocuments();
 
     // Get paginated employees
-    const employees = await User.find({ role: 'EMPLOYEE' })
+    const employees = await User.find()
       .select('-password -resetPasswordToken -resetPasswordExpires -activationToken -activationExpires')
       .sort({ createdAt: -1 })
       .skip(skip)

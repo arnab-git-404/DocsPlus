@@ -35,6 +35,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import Link from "next/link";
+import { toast } from "react-hot-toast";
 
 
 
@@ -340,6 +341,8 @@ export default function CreateEmployeePage() {
 
     setLoading(true);
 
+    const toastId = toast.loading("Creating employee...");
+
     try {
       const basic = parseFloat(formData.basicSalary);
 
@@ -431,14 +434,16 @@ export default function CreateEmployeePage() {
       }
 
       setSuccess("Employee created successfully! Activation email sent.");
-
+      toast.success("Employee created successfully!", { id: toastId });
       setTimeout(() => {
         router.push("/dashboard/admin/employees");
       }, 2000);
     } catch (err: any) {
       setError(err.message);
+      toast.error(err.message, { id: toastId });
     } finally {
       setLoading(false);
+      toast.dismiss(toastId);
     }
   };
 
