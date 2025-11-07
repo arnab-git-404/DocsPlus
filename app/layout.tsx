@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "PaySlip Pro - Salary Management System",
+  title: "DocsPlus - Document Management System",
   description: "Generate salary slips, invoices, and offer letters",
 };
 
