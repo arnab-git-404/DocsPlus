@@ -192,13 +192,13 @@ export async function sendEmail({
   subject,
   html,
   pdfDocument,
-  pdfFilename = 'document.pdf',
+  pdfFilename,
 }: EmailOptions) {
   try {
     const transporter = createTransporter();
 
     const mailOptions: any = {
-      from: `"${process.env.SMTP_FROM_NAME || 'Slip Generator'}" <${process.env.SMTP_USER}>`,
+      from: `"${process.env.EMAIL_FROM_NAME || 'HACKENCE SERVICES'}" <${process.env.SMTP_USER}>`,
       to,
       subject,
       html,
@@ -211,7 +211,7 @@ export async function sendEmail({
       
       mailOptions.attachments = [
         {
-          filename: pdfFilename,
+          filename: pdfFilename || 'document.pdf',
           content: pdfBuffer,
           contentType: 'application/pdf',
         },
@@ -221,7 +221,7 @@ export async function sendEmail({
 
     // Send email
     const info = await transporter.sendMail(mailOptions);
-    console.log('📧 Email sent:', info.messageId);
+    console.log('📧 Email sent to:', to);
 
     return {
       success: true,
