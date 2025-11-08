@@ -170,12 +170,67 @@
 
 
 
-import React from 'react'
+import React from 'react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { AlertCircle, ArrowLeft } from 'lucide-react';
 
-const page = () => {
+const SignupPage = () => {
   return (
-    <div> Due to Only Admin can add Employee, No Public Signup </div>
-  )
-}
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1 text-center">
+          <div className="flex justify-center mb-4">
+            <div className="p-3 rounded-full bg-yellow-100 dark:bg-yellow-900">
+              <AlertCircle className="h-8 w-8 text-yellow-600 dark:text-yellow-400" />
+            </div>
+          </div>
+          <CardTitle className="text-2xl font-bold">Public Signup Disabled</CardTitle>
+          <CardDescription className="text-center">
+            Employee accounts are managed by administrators
+          </CardDescription>
+        </CardHeader>
+        
+        <CardContent className="space-y-4 text-center">
+          <p className="text-muted-foreground">
+            Due to security and access control policies, only administrators can create employee accounts.
+          </p>
+          
+          <div className="p-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
+            <p className="text-sm text-blue-800 dark:text-blue-200">
+              <strong>Need an account?</strong>
+              <br />
+              Please contact your HR department or system administrator to get your credentials.
+            </p>
+          </div>
+        </CardContent>
 
-export default page
+        <CardFooter className="flex flex-col space-y-2">
+          <Button 
+            variant="default" 
+            className="w-full" 
+            asChild
+          >
+            <Link href="/login">
+              Go to Login
+            </Link>
+          </Button>
+          
+          <Button 
+            variant="ghost" 
+            className="w-full" 
+            asChild
+          >
+            <Link href="/">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Home
+            </Link>
+          </Button>
+        </CardFooter>
+      </Card>
+    </div>
+  );
+};
+
+export default SignupPage;
