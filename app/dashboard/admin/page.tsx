@@ -75,7 +75,8 @@ export default  function AdminDashboardPage() {
     {
       title: 'Total Employees',
       value: stats.totalUsers,
-      description: `${stats.activeUsers} active, ${stats.pendingUsers} pending`,
+      // description: `${stats.activeUsers} active, ${stats.pendingUsers} pending`,
+      description: 'Total registered employees',
       icon: Users,
       color: 'text-blue-600',
       bgColor: 'bg-blue-100 dark:bg-blue-900',

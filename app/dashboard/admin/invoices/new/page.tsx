@@ -37,9 +37,9 @@ export default function NewInvoicePage() {
       toast.success("Invoice Created Successfully !", { id: toastId });
       setTimeout(() => {
         if (invoiceData.status === 'SENT') {
-          router.push(`/dashboard/invoices/view/${data.invoice._id}`);
+          router.push(`/dashboard/admin/invoices/view/${data.invoice._id}`);
         } else {
-          router.push('/dashboard/invoices');
+          router.push('/dashboard/admin/invoices');
         }
       }, 1500);
     } catch (err: any) {
