@@ -39,7 +39,8 @@ export default function Home() {
             </p>
             <Button
               size="lg"
-              className="hover:cursor-pointer"
+              variant="default"
+              className="hover:cursor-pointer bg-white"
               onClick={() => router.push("/dashboard")}
             >
               Get Started
