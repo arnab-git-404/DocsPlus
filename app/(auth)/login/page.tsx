@@ -95,7 +95,7 @@ const LoginPage = () => {
         <CardHeader className="space-y-1">
           <CardTitle className="text-7xl font-bold text-center ">
 
-            <Link href="/" className="hover:cursor-pointer flex flex-col items-center justify-center">
+            <Link href="/" className="-ml-2.5 hover:cursor-pointer flex flex-col items-center justify-center">
             <Image
               src="/logo.jpeg"
               alt="Logo"
