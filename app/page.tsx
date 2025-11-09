@@ -27,8 +27,10 @@ export default function Home() {
             <Image
               src="/logo.jpeg"
               alt="Logo"
-              width={200}
-              height={200}
+              width={180}
+              height={180}
+              loading="eager"
+              priority
               className="mb-8 rounded-full object-cover"
             />
             <h1 className="text-4xl md:text-7xl font-bold text-white mb-4">

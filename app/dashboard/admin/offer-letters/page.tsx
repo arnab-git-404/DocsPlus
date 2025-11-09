@@ -34,6 +34,7 @@ import {
   Search,
   FileText,
   MoreVertical,
+  RefreshCw,
   Eye,
   Edit,
   Trash2,
@@ -69,6 +70,8 @@ export default function OfferLettersPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [refreshing, setRefreshing] = useState(false);
+
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
@@ -188,6 +191,13 @@ export default function OfferLettersPage() {
     rejected: offerLetters.filter((o) => o.status === "REJECTED").length,
   };
 
+    const handleRefresh = async () => {
+    localStorage.clear();
+    setRefreshing(true);
+    await fetchOfferLetters();
+    setRefreshing(false);
+  }
+
   return (
     <div className="min-h-screen ">
       <div className=" mx-auto space-y-6 p-4 md:p-6">
@@ -202,12 +212,26 @@ export default function OfferLettersPage() {
               Manage and send job offer letters
             </p>
           </div>
-          <Button
-            onClick={() => router.push("/dashboard/admin/offer-letters/new")}
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Create Offer Letter
-          </Button>
+
+
+          <div className="flex gap-2" >
+            <Button
+            variant={"outline"}
+            className="hover:cursor-pointer"
+              onClick={handleRefresh}
+            >
+
+            <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />              Refresh
+            </Button>
+
+            <Button
+            className="hover:cursor-pointer"
+              onClick={() => router.push("/dashboard/admin/offer-letters/new")}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Create Offer Letter
+            </Button>
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -370,7 +394,10 @@ export default function OfferLettersPage() {
                   Get started by creating your first offer letter
                 </p>
                 <Button
-                  onClick={() => router.push("/dashboard/admin/offer-letters/new")}
+                className="hover:cursor-pointer"
+                  onClick={() =>
+                    router.push("/dashboard/admin/offer-letters/new")
+                  }
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Create Offer Letter
@@ -420,6 +447,7 @@ export default function OfferLettersPage() {
                               <Button
                                 variant="ghost"
                                 size="sm"
+                                className="hover:cursor-pointer"
                                 disabled={actionLoading === offer._id}
                               >
                                 {actionLoading === offer._id ? (
@@ -433,6 +461,7 @@ export default function OfferLettersPage() {
                               <DropdownMenuLabel>Actions</DropdownMenuLabel>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem
+                              className="hover:cursor-pointer"
                                 onClick={() =>
                                   router.push(
                                     `/dashboard/admin/offer-letters/view/${offer._id}`
@@ -442,7 +471,7 @@ export default function OfferLettersPage() {
                                 <Eye className="h-4 w-4 mr-2" />
                                 View
                               </DropdownMenuItem>
-                              <DropdownMenuItem
+                              <DropdownMenuItem className="hover:cursor-pointer"
                                 onClick={() =>
                                   router.push(
                                     `/dashboard/admin/offer-letters/edit/${offer._id}`
@@ -452,13 +481,13 @@ export default function OfferLettersPage() {
                                 <Edit className="h-4 w-4 mr-2" />
                                 Edit
                               </DropdownMenuItem>
-                              <DropdownMenuItem
+                              <DropdownMenuItem className="hover:cursor-pointer"
                                 onClick={() => handleSendEmail(offer._id)}
                               >
                                 <Mail className="h-4 w-4 mr-2" />
                                 Send Email
                               </DropdownMenuItem>
-                              <DropdownMenuItem
+                              <DropdownMenuItem className="hover:cursor-pointer"
                                 onClick={() =>
                                   // window.open(
                                   //   `/api/offer-letter/${offer._id}/pdf`,
@@ -473,9 +502,9 @@ export default function OfferLettersPage() {
                                 Download PDF
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
-                              <DropdownMenuItem
+                              <DropdownMenuItem 
                                 onClick={() => handleDelete(offer._id)}
-                                className="text-red-600 focus:text-red-600"
+                                className="text-red-600 focus:text-red-600 hover:cursor-pointer"
                               >
                                 <Trash2 className="h-4 w-4 mr-2" />
                                 Delete

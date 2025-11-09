@@ -1,4 +1,8 @@
 
+import nodemailer from 'nodemailer';
+import { renderToBuffer } from '@react-pdf/renderer';
+import { ReactElement } from 'react';
+
 
 // Base email template wrapper
 function wrapEmailTemplate(title: string, content: string): string {
@@ -40,7 +44,7 @@ function wrapEmailTemplate(title: string, content: string): string {
   `;
 }
 
-// 1. Activation Email
+// Activation Email
 interface SendActivationEmailParams {
   to: string;
   name: string;
@@ -161,10 +165,6 @@ export async function sendGenericEmail({
 
 
 
-
-import nodemailer from 'nodemailer';
-import { renderToBuffer } from '@react-pdf/renderer';
-import { ReactElement } from 'react';
 
 // Create reusable transporter
 const createTransporter = () => {

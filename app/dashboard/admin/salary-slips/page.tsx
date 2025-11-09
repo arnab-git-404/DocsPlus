@@ -158,9 +158,11 @@ export default function SalarySlipsDashboard() {
     }
   };
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
+    localStorage.clear();
     setRefreshing(true);
-    fetchSalarySlips(true);
+    await fetchSalarySlips();
+    setRefreshing(false);
   };
 
   const filterSlips = () => {
