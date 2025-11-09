@@ -259,7 +259,18 @@ export default function ViewSalarySlipPage() {
   }
 
   const totalAllowances = Object.values(salarySlip.salary.allowances).reduce((a, b) => a + b, 0);
-  const totalDeductions = Object.values(salarySlip.salary.deductions).reduce((a, b) => a + b, 0);
+  // const totalDeductions = Object.values(salarySlip.salary.deductions).reduce((a, b) => a + b, 0);
+  const  totalDeductions = Number(salarySlip.salary.grossSalary - salarySlip.salary.netSalary)
+
+  const formatCurrency = (amount: number) => {
+    const formatted = new Intl.NumberFormat("en-IN", {
+      // style: "currency",
+      // currency: "INR",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(amount)
+    return `Rs. ${formatted}`;
+  };
 
   return (
     <div className="min-h-screen p-4 md:p-8">
@@ -424,36 +435,37 @@ export default function ViewSalarySlipPage() {
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-sm">Basic Salary</span>
-                    <span className="font-medium">₹{salarySlip.salary.basicSalary.toLocaleString('en-IN')}</span>
+                    <span className="font-medium">{formatCurrency(salarySlip.salary.basicSalary)}</span>
+
                   </div>
                   {salarySlip.salary.allowances.hra > 0 && (
                     <div className="flex justify-between">
                       <span className="text-sm">HRA</span>
-                      <span className="font-medium">₹{salarySlip.salary.allowances.hra.toLocaleString('en-IN')}</span>
+                      <span className="font-medium">{formatCurrency(salarySlip.salary.allowances.hra)}</span>
                     </div>
                   )}
                   {salarySlip.salary.allowances.transport > 0 && (
                     <div className="flex justify-between">
                       <span className="text-sm">Transport</span>
-                      <span className="font-medium">₹{salarySlip.salary.allowances.transport.toLocaleString('en-IN')}</span>
+                      <span className="font-medium">{formatCurrency(salarySlip.salary.allowances.transport)}</span>
                     </div>
                   )}
                   {salarySlip.salary.allowances.medical > 0 && (
                     <div className="flex justify-between">
                       <span className="text-sm">Medical</span>
-                      <span className="font-medium">₹{salarySlip.salary.allowances.medical.toLocaleString('en-IN')}</span>
+                      <span className="font-medium">{formatCurrency(salarySlip.salary.allowances.medical)}</span>
                     </div>
                   )}
                   {salarySlip.salary.allowances.other > 0 && (
                     <div className="flex justify-between">
                       <span className="text-sm">Other Allowances</span>
-                      <span className="font-medium">₹{salarySlip.salary.allowances.other.toLocaleString('en-IN')}</span>
+                      <span className="font-medium">{formatCurrency(salarySlip.salary.allowances.other)}</span>
                     </div>
                   )}
                   <Separator />
                   <div className="flex justify-between font-semibold">
                     <span>Gross Salary</span>
-                    <span className="text-green-600">₹{salarySlip.salary.grossSalary.toLocaleString('en-IN')}</span>
+                    <span className="text-green-600">{formatCurrency(salarySlip.salary.grossSalary)}</span>
                   </div>
                 </div>
               </div>
@@ -465,25 +477,26 @@ export default function ViewSalarySlipPage() {
                   {salarySlip.salary.deductions.pf > 0 && (
                     <div className="flex justify-between">
                       <span className="text-sm">Provident Fund</span>
-                      <span className="font-medium">₹{salarySlip.salary.deductions.pf.toLocaleString('en-IN')}</span>
+                      <span className="font-medium">{formatCurrency(salarySlip.salary.deductions.pf)}</span>
                     </div>
                   )}
                   {salarySlip.salary.deductions.tax > 0 && (
                     <div className="flex justify-between">
                       <span className="text-sm">Tax</span>
-                      <span className="font-medium">₹{salarySlip.salary.deductions.tax.toLocaleString('en-IN')}</span>
+                      <span className="font-medium">{formatCurrency(salarySlip.salary.deductions.tax)}</span>
                     </div>
                   )}
                   {salarySlip.salary.deductions.other > 0 && (
                     <div className="flex justify-between">
                       <span className="text-sm">Other Deductions</span>
-                      <span className="font-medium">₹{salarySlip.salary.deductions.other.toLocaleString('en-IN')}</span>
+                      <span className="font-medium">{formatCurrency(salarySlip.salary.deductions.other)}</span>
                     </div>
                   )}
                   <Separator />
                   <div className="flex justify-between font-semibold">
                     <span>Total Deductions</span>
-                    <span className="text-red-600">₹{totalDeductions.toLocaleString('en-IN')}</span>
+                    
+                    <span className="text-red-600">{formatCurrency(totalDeductions)}</span>
                   </div>
                 </div>
               </div>
@@ -495,7 +508,7 @@ export default function ViewSalarySlipPage() {
             <div className="flex justify-between items-center  p-6 rounded-lg">
               <span className="text-xl font-bold">Net Salary</span>
               <span className="text-2xl font-bold text-green-600">
-                ₹{salarySlip.salary.netSalary.toLocaleString('en-IN')}
+                {formatCurrency(salarySlip.salary.netSalary)}
               </span>
             </div>
           </CardContent>

@@ -15,6 +15,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, Trash2, Calculator, Hash } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { COMPANY_LOCATIONS, CompanyLocationType } from '@/lib/companyLocation';
 
 interface InvoiceItem {
   item: string;
@@ -31,6 +32,8 @@ interface InvoiceFormProps {
 }
 
 export default function InvoiceForm({ onSubmit, loading, initialData }: InvoiceFormProps) {
+    const [companyLocation, setCompanyLocation] = useState<CompanyLocationType>('BIHAR');
+
   const [formData, setFormData] = useState({
     clientName: '',
     clientAddress: '',
@@ -51,7 +54,38 @@ export default function InvoiceForm({ onSubmit, loading, initialData }: InvoiceF
     sgst: 9,
     notes: '',
     terms: 'Payment is due within 15 days of invoice date.',
+    companyLocation: 'BIHAR',
+    companyName: COMPANY_LOCATIONS.BIHAR.name,
+    companyAddress: COMPANY_LOCATIONS.BIHAR.address,
+    companyCity: COMPANY_LOCATIONS.BIHAR.city,
+    companyState: COMPANY_LOCATIONS.BIHAR.state,
+    companyPincode: COMPANY_LOCATIONS.BIHAR.pincode,
+    companyPhone: COMPANY_LOCATIONS.BIHAR.phone,
+    companyEmail: COMPANY_LOCATIONS.BIHAR.email,
+    companyWebsite: COMPANY_LOCATIONS.BIHAR.website,
+    companyGSTIN: COMPANY_LOCATIONS.BIHAR.gstin,
   });
+
+
+  const handleLocationChange = (location: CompanyLocationType) => {
+    setCompanyLocation(location);
+    const companyDetails = COMPANY_LOCATIONS[location];
+    
+    setFormData(prev => ({
+      ...prev,
+      companyLocation: location,
+      companyName: companyDetails.name,
+      companyAddress: companyDetails.address,
+      companyCity: companyDetails.city,
+      companyState: companyDetails.state,
+      companyPincode: companyDetails.pincode,
+      companyPhone: companyDetails.phone,
+      companyEmail: companyDetails.email,
+      companyWebsite: companyDetails.website,
+      companyGSTIN: companyDetails.gstin,
+    }));
+  };
+
 
   const [items, setItems] = useState<InvoiceItem[]>([
     { item: '', description: '', quantity: 1, rate: 0, amount: 0 }
@@ -209,6 +243,57 @@ export default function InvoiceForm({ onSubmit, loading, initialData }: InvoiceF
           </AlertDescription>
         </Alert>
       )}
+
+      {/* Company Location Selection */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Company Location</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <Label htmlFor="companyLocation">Select Branch Location *</Label>
+            <Select
+            
+              value={companyLocation}
+              onValueChange={(value) => handleLocationChange(value as CompanyLocationType)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select location" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="BIHAR" className="hover:cursor-pointer" > 
+                  <div className="flex flex-col">
+                    <span className="font-medium">Bihar Office</span>
+                    <span className="text-xs text-muted-foreground">
+                      Balbhadrapur, Laheriasarai, Darbhanga
+                    </span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="KOLKATA" className="hover:cursor-pointer" >
+                  <div className="flex flex-col">
+                    <span className="font-medium">Kolkata Office</span>
+                    <span className="text-xs text-muted-foreground">
+                      Kolkata, West Bengal
+                    </span>
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            
+            {/* Display Selected Company Details */}
+            <div className="mt-4 p-4 bg-muted rounded-lg">
+              <p className="text-sm font-medium mb-2">Selected Office Details:</p>
+              <div className="text-m space-y-1 text-muted-foreground">
+                <p><strong>Address:</strong> {formData.companyAddress}</p>
+                <p><strong>City:</strong> {formData.companyCity}, {formData.companyState}</p>
+                <p><strong>Pincode:</strong> {formData.companyPincode}</p>
+                <p><strong>Phone:</strong> {formData.companyPhone}</p>
+                <p><strong>Email:</strong> {formData.companyEmail}</p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Client Details */}
       <Card>
