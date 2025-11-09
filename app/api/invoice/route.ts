@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
 import dbConnect from '@/lib/db';
 import Invoice from '@/models/Invoice';
-import { getCompanyDetails } from '@/lib/companyLocation';
+
 
 
 // GET - Fetch all invoices
@@ -102,14 +102,8 @@ export async function POST(request: NextRequest) {
     await dbConnect();
 
     const body = await request.json();
-    const { companyLocation, ...invoiceData } = body;
 
  console.log('📝 Creating invoice:', body.invoiceNumber);
-
-
-    // Get company details based on selected location
-    const companyDetails = getCompanyDetails(companyLocation || 'BIHAR');
-
 
 
     // Validate required fields
@@ -163,17 +157,7 @@ export async function POST(request: NextRequest) {
 
     // Create invoice
     const invoice = new Invoice({
-      ...invoiceData,
-      companyLocation: companyLocation || 'BIHAR',
-      companyName: companyDetails.name,
-      companyAddress: companyDetails.address,
-      companyCity: companyDetails.city,
-      companyState: companyDetails.state,
-      companyPincode: companyDetails.pincode,
-      companyPhone: companyDetails.phone,
-      companyEmail: companyDetails.email,
-      companyWebsite: companyDetails.website,
-      companyGSTIN: companyDetails.gstin,
+      ...body,
       createdBy: userId,
       invoiceDate: body.invoiceDate || new Date(),
     });
