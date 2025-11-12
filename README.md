@@ -107,7 +107,7 @@ A comprehensive HR management system for generating salary slips, invoices, and 
 
 ## 🎬 Demo
 
-🔗 **Live Demo**: https://office-docsplus.vercel.app
+🔗 **Live Demo**: https://docsplus.vercel.app
 
 ### Test Credentials
 - **Admin**
