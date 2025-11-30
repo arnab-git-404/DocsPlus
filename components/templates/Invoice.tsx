@@ -1832,12 +1832,12 @@ export const InvoiceDocument = ({ data }: { data: any }) => {
 
           {/* Signature */}
           <View style={styles.signature}>
-               <Image
+               {/* <Image
                   style={styles.digitalSignature}
                   
                   // src={data.logo || `${process.env.NEXT_PUBLIC_APP_URL}/logo.v3.jpeg`}
                   src={'/arnabSignature.png'}
-                />
+                /> */}
              
             <View style={styles.signatureLine}></View>
             <Text style={styles.signatureText}>Authorized Signature</Text>
