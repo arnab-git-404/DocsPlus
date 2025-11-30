@@ -22,6 +22,10 @@ export interface IInvoice extends Document {
   clientEmail?: string;
   clientGSTIN?: string;
   
+  
+  // Company Location Selection
+  companyLocation: 'BIHAR' | 'KOLKATA';
+
   // Company Details (Hackence Services)
   companyName: string;
   companyAddress: string;
@@ -96,38 +100,38 @@ const InvoiceSchema = new Schema<IInvoice>(
     clientEmail: { type: String },
     clientGSTIN: { type: String },
     
+    // Company Location Selection
+    companyLocation: {
+      type: String,
+      enum: ['BIHAR', 'KOLKATA'],
+      required: true,
+      default: 'BIHAR',
+    },
+
     // Company Details
     companyName: {
       type: String,
-      default: 'HACKENCE SERVICES',
     },
     companyAddress: {
       type: String,
-      default: 'Balbhadrapur, Laheriasarai',
     },
     companyCity: {
       type: String,
-      default: 'Darbhanga',
     },
     companyState: {
       type: String,
-      default: 'Bihar',
     },
     companyPincode: {
       type: String,
-      default: '846004',
     },
     companyPhone: {
       type: String,
-      default: '+91 9472948357',
     },
     companyEmail: {
       type: String,
-      default: 'hackence.services@gmail.com',
     },
     companyWebsite: {
       type: String,
-      default: 'www.hackence.com',
     },
     companyGSTIN: { type: String },
     
