@@ -31,12 +31,12 @@ function wrapEmailTemplate(title: string, content: string): string {
           </div>
           <div class="content">
             ${content}
-            <p>Best regards,<br>Hackence Services Team</p>
+            <p>Best regards,<br>${process.env.NEXT_PUBLIC_COMPANY_NAME} Team</p>
           </div>
           <div class="footer">
-            <p>© ${new Date().getFullYear()} Hackence Services. All rights reserved.</p>
-            <p>Balbhadrapur, Laheriasarai, Darbhanga, Bihar - 846004</p>
-            <p>Phone: +91 9472948357 | Email: hackence.services@gmail.com</p>
+            <p>© ${new Date().getFullYear()} ${process.env.NEXT_PUBLIC_COMPANY_NAME}. All rights reserved.</p>
+            <p>Akhira, Rampurhat, Birbhum, West Bengal - 731224</p>
+            <p>Phone: +91 8637076499 | Email: mukherjeearnab988@gmail.com</p>
           </div>
         </div>
       </body>
@@ -83,10 +83,10 @@ export async function sendActivationEmail({
     `;
 
     await transporter.sendMail({
-      from: `"Hackence Services" <${process.env.SMTP_USER}>`,
+      from: `"${process.env.NEXT_PUBLIC_COMPANY_NAME}" <${process.env.SMTP_USER}>`,
       to,
-      subject: 'Activate Your Account - Hackence Services',
-      html: wrapEmailTemplate('Welcome to Hackence Services!', content),
+      subject: `Activate Your Account - ${process.env.NEXT_PUBLIC_COMPANY_NAME}`,
+      html: wrapEmailTemplate(`Welcome to ${process.env.NEXT_PUBLIC_COMPANY_NAME}!`, content),
     });
 
     console.log(`✅ Activation email sent to ${to}`);
