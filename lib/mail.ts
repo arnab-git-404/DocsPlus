@@ -128,7 +128,7 @@ export async function sendGenericEmail({
     }
 
     await transporter.sendMail({
-      from: `"Hackence Services" <${process.env.SMTP_USER}>`,
+      from: `"${process.env.NEXT_PUBLIC_COMPANY_NAME}" <${process.env.SMTP_USER}>`,
       to,
       subject,
       html: wrapEmailTemplate(title, emailContent),
@@ -198,7 +198,7 @@ export async function sendEmail({
     const transporter = createTransporter();
 
     const mailOptions: any = {
-      from: `"HACKENCE SERVICES" <${process.env.SMTP_USER}>`,
+      from: `"${process.env.NEXT_PUBLIC_COMPANY_NAME}" <${process.env.SMTP_USER}>`,
       to,
       subject,
       html,

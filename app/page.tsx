@@ -1,9 +1,11 @@
-"use client";
+'use client';
 
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Beams from "@/components/Beams";
+
+export const dynamic = 'force-static';
 
 export default function Home() {
   const router = useRouter();
@@ -25,16 +27,16 @@ export default function Home() {
         <div className="absolute inset-0">
           <div className="flex flex-col items-center justify-center h-full text-center px-4">
             <Image
-              src="/logo.jpeg"
-              alt="Logo"
-              width={180}
-              height={180}
+              src={process.env.NEXT_PUBLIC_APP_LOGO!}
+              alt="DocsPlus"
+              width={300}
+              height={300}
               loading="eager"
               priority
-              className="mb-8 rounded-full object-cover"
+              className="mb-8 rounded-full object-cover h-48 w-48 md:h-72 md:w-72"
             />
             <h1 className="text-4xl md:text-7xl font-bold text-white mb-4">
-              Welcome to DocsPlus
+              Welcome to {process.env.NEXT_PUBLIC_COMPANY_NAME}
             </h1>
             <p className="text-lg md:text-2xl text-white mb-8 max-w-2xl">
               Generate and manage salary slips with ease. Streamline your payroll process today!
