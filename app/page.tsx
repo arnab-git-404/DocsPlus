@@ -28,7 +28,7 @@ export default function Home() {
           <div className="flex flex-col items-center justify-center h-full text-center px-4">
             <Image
               src={process.env.NEXT_PUBLIC_APP_LOGO!}
-              alt="DocsPlus"
+              alt="DocsPlus | Office Document Management System"
               width={300}
               height={300}
               loading="eager"
