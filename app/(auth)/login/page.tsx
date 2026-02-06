@@ -49,6 +49,23 @@ const LoginPage = () => {
     setFormData({ ...formData, role: value });
   };
 
+  // Add this function to set default credentials
+  const setDefaultCredentials = (role: "ADMIN" | "EMPLOYEE") => {
+    if (role === "ADMIN") {
+      setFormData({
+        email: "crypto.email.rph@gmail.com",
+        password: "pass##$$word",
+        role: "ADMIN",
+      });
+    } else {
+      setFormData({
+        email: "jaylen.sierra.1995@gmail.com",
+        password: "pass##$$word",
+        role: "EMPLOYEE",
+      });
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -94,15 +111,17 @@ const LoginPage = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-7xl font-bold text-center ">
-
-            <Link href="/" className="-ml-2.5 hover:cursor-pointer flex flex-col items-center justify-center">
-            <Image
-              src="/logo.jpeg"
-              alt="Logo"
-              width={100}
-              height={100}
-              className="rounded-full object-cover"
-            />
+            <Link
+              href="/"
+              className="-ml-2.5 hover:cursor-pointer flex flex-col items-center justify-center"
+            >
+              <Image
+                src={process.env.NEXT_PUBLIC_APP_LOGO!}
+                alt="DocsPlus | Office Document Management System"
+                width={100}
+                height={100}
+                className="rounded-full object-cover h-32 w-34"
+              />
               DocsPlus
             </Link>
           </CardTitle>
@@ -199,6 +218,32 @@ const LoginPage = () => {
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {loading ? "Signing in..." : "Sign in"}
             </Button>
+
+            <div className="w-full space-y-2">
+              <p className="text-xs text-center text-gray-500">
+                Quick Login (For Testing)
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 hover:cursor-pointer "
+                  onClick={() => setDefaultCredentials("ADMIN")}
+                >
+                  Use Admin
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 hover:cursor-pointer"
+                  onClick={() => setDefaultCredentials("EMPLOYEE")}
+                >
+                  Use Employee
+                </Button>
+              </div>
+            </div>
 
             <p className="text-sm text-center text-gray-600">
               Don't have an account?{" "}

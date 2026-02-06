@@ -9,84 +9,84 @@ import {
 
 const styles = StyleSheet.create({
   page: {
-    padding: 40,
-    fontSize: 11,
+    padding: 30,
+    fontSize: 10,
     fontFamily: "Helvetica",
     backgroundColor: "#ffffff",
-    position: 'relative',
+    position: "relative",
   },
   header: {
-    marginBottom: 20,
-    paddingBottom: 15,
+    marginBottom: 10,
+    paddingBottom: 18,
     borderBottomWidth: 1,
     borderBottomColor: "#333333",
   },
   logo: {
-    width: 60,
-    height: 60,
+    width: 100,
+    height: 80,
     marginBottom: 8,
     alignSelf: "center",
   },
   companyName: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 4,
     color: "#000000",
   },
   companyAddress: {
-    fontSize: 9,
+    fontSize: 8,
     color: "#555555",
     textAlign: "center",
-    lineHeight: 1.3,
+    lineHeight: 1.2,
   },
   letterhead: {
-    fontSize: 10,
+    fontSize: 9,
     color: "#333333",
-    marginBottom: 3,
+    marginBottom: 2,
   },
   offerNumber: {
-    fontSize: 10,
+    fontSize: 9,
     color: "#000000",
-    marginBottom: 15,
+    marginBottom: 10,
     fontWeight: "bold",
   },
   date: {
-    marginBottom: 20,
-    fontSize: 10,
+    marginBottom: 10,
+    fontSize: 9,
     color: "#000000",
   },
   recipientAddress: {
-    marginBottom: 20,
-    fontSize: 10,
-    lineHeight: 1.4,
+    marginBottom: 10,
+    fontSize: 9,
+    lineHeight: 1.3,
   },
   recipientLine: {
-    marginBottom: 3,
+    marginBottom: 2,
     color: "#000000",
   },
   subject: {
-    marginBottom: 15,
-    marginTop: 10,
-    fontSize: 11,
+    marginBottom: 10,
+    marginTop: 8,
+    fontSize: 10,
     fontWeight: "bold",
     textDecoration: "underline",
   },
   paragraph: {
-    marginBottom: 12,
-    lineHeight: 1.5,
+    marginBottom: 8,
+    lineHeight: 1.4,
     textAlign: "justify",
     color: "#000000",
   },
   sectionHeading: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: "bold",
-    marginTop: 15,
-    marginBottom: 10,
+    marginTop: 10,
+    marginBottom: 6,
     color: "#000000",
   },
   table: {
-    marginVertical: 15,
+    marginVertical: 8,
     borderWidth: 1,
     borderColor: "#000000",
   },
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderBottomWidth: 1,
     borderBottomColor: "#000000",
-    minHeight: 30,
+    minHeight: 25,
   },
   lastRow: {
     borderBottomWidth: 0,
@@ -105,8 +105,8 @@ const styles = StyleSheet.create({
   },
   tableCell: {
     flex: 1,
-    padding: 8,
-    fontSize: 10,
+    padding: 6,
+    fontSize: 9,
     justifyContent: "center",
   },
   tableCellBorder: {
@@ -121,67 +121,67 @@ const styles = StyleSheet.create({
     color: "#000000",
   },
   list: {
-    marginLeft: 20,
-    marginBottom: 12,
+    marginLeft: 15,
+    marginBottom: 8,
   },
   listItem: {
-    marginBottom: 6,
-    lineHeight: 1.4,
-    fontSize: 10,
+    marginBottom: 4,
+    lineHeight: 1.3,
+    fontSize: 9,
     color: "#000000",
   },
   footer: {
-    marginTop: 30,
+    marginTop: 15,
   },
   closing: {
-    marginBottom: 40,
+    marginBottom: 25,
   },
   signatureLine: {
     borderBottomWidth: 1,
     borderBottomColor: "#000000",
-    width: 180,
-    marginTop: 10,
-    marginBottom: 3,
+    width: 150,
+    marginTop: 8,
+    marginBottom: 2,
   },
   signerName: {
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: "bold",
     color: "#000000",
   },
   signerTitle: {
-    fontSize: 10,
+    fontSize: 9,
     color: "#000000",
-    marginTop: 2,
+    marginTop: 1,
   },
   acceptanceSection: {
-    marginTop: 30,
-    paddingTop: 20,
+    marginTop: 15,
+    paddingTop: 10,
     borderTopWidth: 1,
     borderTopColor: "#000000",
   },
   acceptanceTitle: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: "bold",
-    marginBottom: 15,
+    marginBottom: 8,
     color: "#000000",
   },
   acceptanceSignature: {
-    marginTop: 30,
+    marginTop: 20,
   },
   pageFooter: {
     position: "absolute",
-    fontSize: 8,
-    bottom: 20,
-    left: 40,
-    right: 40,
+    fontSize: 7,
+    bottom: 15,
+    left: 30,
+    right: 30,
     textAlign: "center",
     color: "#666666",
     borderTopWidth: 1,
     borderTopColor: "#cccccc",
-    paddingTop: 5,
+    paddingTop: 4,
   },
 
- // Watermark for PDF
+  // Watermark for PDF
   watermarkContainer: {
     position: "absolute",
     top: "50%",
@@ -189,23 +189,45 @@ const styles = StyleSheet.create({
     // transform: "translate(-50%, -50%) rotate(-45deg)",
     opacity: 0.08,
     zIndex: 0,
-    display:"flex",
-    justifyContent:"center",
-    alignItems:"center"
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   watermarkText: {
-    fontSize: 70,
+    fontSize: 60,
     fontWeight: "bold",
     color: "#000000",
-    letterSpacing: 5,
+    letterSpacing: 4,
   },
 
   // Content wrapper
   contentWrapper: {
-    position: 'relative',
+    position: "relative",
     zIndex: 1,
   },
 
+
+  imageWatermarkContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1,
+  },
+  watermarkLogo: {
+    width: 70,
+    height: 50,
+    marginRight: 8,
+  },
+  watermarkImage: {
+    width: 450,
+    height: 270,
+    opacity: 0.4,
+  },
 });
 
 interface OfferLetterData {
@@ -260,27 +282,30 @@ export const OfferLetterDocument = ({ data }: { data: OfferLetterData }) => {
     return `Rs. ${formatted}`;
   };
 
-
   return (
-    <Document>
+    <Document
+      author="Arnab Mukherjee"
+      title={`Offer Letter - ${data.candidateName} - ${data.position}`}
+      subject="Offer Letter | Generated by DocsPlus"
+    >
       <Page size="A4" style={styles.page}>
+        <View style={styles.imageWatermarkContainer} fixed>
 
-        
-          <View style={styles.watermarkContainer} fixed>
-            <Text style={styles.watermarkText}>
-              {/* {data.companyNamee || "HACKENCE SERVICES"} */}
-              {"HACKENCE SERVICES"}
+          {/* <Text style={styles.watermarkText}>
+              {data.watermark || "DocsPlus"}              
+            </Text> */}
 
-            </Text>
-          </View>
-      
-
+          <Image
+            src={`${process.env.NEXT_PUBLIC_APP_URL}${process.env.NEXT_PUBLIC_APP_LOGO}`}
+            style={styles.watermarkImage}
+          />
+        </View>
 
         {/* Letterhead */}
         <View style={styles.header}>
           <Image
             style={styles.logo}
-            src={`${process.env.NEXT_PUBLIC_APP_URL}/logo.v3.jpeg`}
+            src={`${process.env.NEXT_PUBLIC_APP_URL}${process.env.NEXT_PUBLIC_APP_LOGO}`}
           />
           <Text style={styles.companyName}>{data.companyName}</Text>
           <Text style={styles.companyAddress}>
@@ -537,7 +562,3 @@ export const OfferLetterDocument = ({ data }: { data: OfferLetterData }) => {
     </Document>
   );
 };
-
-
-
-

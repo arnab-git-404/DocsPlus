@@ -116,7 +116,7 @@ const ForgotPasswordPage = () => {
             <CardFooter className="flex flex-col space-y-4 mt-4">
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full hover:cursor-pointer"
                 disabled={loading}
               >
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -126,7 +126,7 @@ const ForgotPasswordPage = () => {
               <Button
                 type="button"
                 variant="ghost"
-                className="w-full"
+                className="w-full hover:cursor-pointer "
                 onClick={() => router.push('/login')}
                 disabled={loading}
               >
@@ -150,7 +150,7 @@ const ForgotPasswordPage = () => {
               </p>
               <Button
                 variant="outline"
-                className="w-full"
+                className="w-full hover:cursor-pointer"
                 onClick={() => setSuccess(false)}
               >
                 Try Again
@@ -160,7 +160,7 @@ const ForgotPasswordPage = () => {
             <div className="pt-4">
               <Button
                 variant="ghost"
-                className="w-full"
+                className="w-full hover:cursor-pointer"
                 onClick={() => router.push('/login')}
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />

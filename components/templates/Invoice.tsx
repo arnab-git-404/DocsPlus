@@ -1311,7 +1311,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   logo: {
-    width: 50,
+    width: 80,
     height: 50,
     marginRight: 10,
   },
@@ -1642,7 +1642,7 @@ export const InvoiceDocument = ({ data }: { data: any }) => {
  {data.watermark !== false && (
           <View style={styles.watermarkContainer} fixed>
             <Image
-              src={data.logo || "/Hackence-bg.png"}
+              src={data.logo || "/logoDocsPlus.png"}
               style={styles.watermarkImage}
             />
            
@@ -1659,7 +1659,7 @@ export const InvoiceDocument = ({ data }: { data: any }) => {
               <View style={styles.leftSection}>
                 <Image
                   style={styles.logo}
-                  src={data.logo || `${process.env.NEXT_PUBLIC_APP_URL}/logo.v3.jpeg`}
+                  src={data.logo || `${process.env.NEXT_PUBLIC_APP_URL}/logoDocsPlus.png`}
                 />
                 <View style={styles.companyInfo}>
                   <Text style={styles.companyName}>{data.companyName}</Text>
@@ -1832,12 +1832,12 @@ export const InvoiceDocument = ({ data }: { data: any }) => {
 
           {/* Signature */}
           <View style={styles.signature}>
-               <Image
+               {/* <Image
                   style={styles.digitalSignature}
                   
                   // src={data.logo || `${process.env.NEXT_PUBLIC_APP_URL}/logo.v3.jpeg`}
                   src={'/arnabSignature.png'}
-                />
+                /> */}
              
             <View style={styles.signatureLine}></View>
             <Text style={styles.signatureText}>Authorized Signature</Text>
