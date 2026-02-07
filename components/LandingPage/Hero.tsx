@@ -2,17 +2,17 @@
 
 import LaserFlow from "@/components/LaserFlow";
 import { useRef } from "react";
+import Link from "next/link";
 
-import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button"
+import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
 
-{/* <section style={{position: 'relative',height: 500,overflow: 'hidden'}}>
+{
+  /* <section style={{position: 'relative',height: 500,overflow: 'hidden'}}>
   <div style={{ height: '100%',overflowY: 'auto',padding: '6rem 2rem' }}>
     <!-- Content Here - such as an image or text -->
   </div>
-
-  
-</section> */}
-
+</section> */
+}
 
 export default function Hero() {
   //   const revealRef = useRef<HTMLImageElement>(null);
@@ -105,7 +105,6 @@ export default function Hero() {
         }
       />
 
-
       {/* CONTENT */}
       {/* <div className="relative z-20 flex h-full items-center justify-center px-6">
         <div className="max-w-4xl w-full rounded-2xl border border-pink-400/40 bg-black/60 backdrop-blur-xl p-12 text-center shadow-[0_0_40px_rgba(255,121,198,0.25)]">
@@ -132,11 +131,11 @@ export default function Hero() {
       <div className="relative z-20 flex h-full items-center justify-center px-6">
         <div className="max-w-7xl w-full">
           {/* Badge */}
-          <div className="mb-6">
+          {/* <div className="mb-6">
             <span className="inline-block rounded-full bg-blue-500/10 border border-blue-400/30 px-4 py-2 text-sm font-medium text-blue-400">
               NEW: AI-POWERED CONTRACT REVIEW
             </span>
-          </div>
+          </div> */}
 
           {/* Heading */}
           <h1 className="text-6xl md:text-7xl font-bold text-white mb-6 leading-tight">
@@ -153,20 +152,22 @@ export default function Hero() {
 
           {/* Buttons */}
           <div className="flex gap-4 mb-8">
-            <InteractiveHoverButton className="hover:cursor-pointer rounded-lg bg-blue-600 px-6 py-3 text-white font-medium hover:bg-blue-700 transition">
-              Get Started for Free
-            </InteractiveHoverButton>
+            <Link href="/login">
+              <InteractiveHoverButton className="hover:cursor-pointer rounded-lg bg-blue-600 px-6 py-3 text-white font-medium hover:bg-blue-700 transition">
+                Get Started for Free
+              </InteractiveHoverButton>
+            </Link>
 
-            <button className="hover:cursor-pointer rounded-lg border border-white/30 px-6 py-3 text-white hover:bg-white/10 transition flex items-center gap-2">
+            {/* <button className="hover:cursor-pointer rounded-lg border border-white/30 px-6 py-3 text-white hover:bg-white/10 transition flex items-center gap-2">
               <span className="w-5 h-5 bg-white rounded-full flex items-center justify-center text-black text-xs">
                 ▶
               </span>
               Book a Demo
-            </button>
+            </button> */}
           </div>
 
           {/* Social Proof */}
-          <div className="flex items-center gap-3 text-gray-400 text-sm">
+          {/* <div className="flex items-center gap-3 text-gray-400 text-sm">
             <div className="flex -space-x-2">
               <div className="w-8 h-8 rounded-full bg-gray-600 border-2 border-[#060010]"></div>
               <div className="w-8 h-8 rounded-full bg-gray-500 border-2 border-[#060010]"></div>
@@ -177,7 +178,7 @@ export default function Hero() {
               <span className="font-semibold text-white">500+ startups</span>{" "}
               managing HR today
             </span>
-          </div>
+          </div> */}
         </div>
       </div>
     </section>

@@ -1,4 +1,3 @@
-
 import {
   Card,
   CardContent,
@@ -7,7 +6,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { BorderBeam } from "@/components/ui/border-beam";
-
 
 export default function Features() {
   const features = [
@@ -42,7 +40,7 @@ export default function Features() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-5xl font-bold text-white mb-4">
+          <h2 className="text-6xl font-bold text-white mb-4">
             Simplify your HR workflow
           </h2>
           <p className="text-gray-400 text-lg max-w-3xl mx-auto">
@@ -79,7 +77,7 @@ export default function Features() {
                 // colorFrom="#ef4444"
                 colorTo="#3b82f6"
               />
-                 <BorderBeam
+              <BorderBeam
                 duration={8}
                 size={100}
                 reverse

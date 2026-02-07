@@ -7,7 +7,7 @@ export default function Integration() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center">
-          <h2 className="text-5xl font-bold text-white mb-6">
+          <h2 className="lg:text-6xl font-bold text-white mb-6">
             Connect Everything You Use
           </h2>
           <p className="text-gray-400 text-lg max-w-3xl mx-auto">
@@ -17,7 +17,7 @@ export default function Integration() {
         </div>
 
         {/* Animated Beam Component */}
-        <AnimatedBeamMultipleOutputDemo />
+        <AnimatedBeamMultipleOutputDemo/>
       </div>
     </section>
   );
