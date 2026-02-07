@@ -26,14 +26,14 @@ export default function CTA() {
           <Button
             size="lg"
             className="hover:cursor-pointer bg-white text-[#060010] hover:bg-blue-50 font-semibold px-8 py-6 text-lg"
-            onClick={() => router.push("/signup")}
+            onClick={() => router.push("/login")}
           >
             Start Your Free Trial
           </Button>
           <Button
             size="lg"
             variant="outline"
-            className="hover:cursor-pointer border-2 border-white text-white hover:bg-white hover:text-blue-400 font-semibold px-8 py-6 text-lg"
+            className="hover:cursor-pointer border-2 border-white  text-[#060010] dark:text-white hover:bg-white hover:text-blue-400 font-semibold px-8 py-6 text-lg"
             onClick={() => window.location.href = "mailto:mukherjeearnab988@gmail.com?subject=Request for Sales Call&body=Hi, I would like to schedule a call to discuss DocsPlus."}
           >
             Talk to Sales
